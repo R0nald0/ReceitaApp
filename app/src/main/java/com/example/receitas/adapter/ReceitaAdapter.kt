@@ -1,22 +1,19 @@
-package com.example.receitas
+package com.example.receitas.adapter
 
 import android.content.Intent
-import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.recyclerview.widget.RecyclerView
+import com.example.receitas.R
 import com.example.receitas.databinding.RcvItemLayoutBinding
+import com.example.receitas.domain.model.Receita
+import com.example.receitas.presentation.view.DetalhesActivity
 
 class ReceitaAdapter() :RecyclerView.Adapter<ReceitaAdapter.ReceitasViewHolder>(){
 
      var listReceita = mutableListOf<Receita>(
-         Receita("escondidinho de Camarão",R.drawable.carne1,"35min",
+         Receita(0,"escondidinho de Camarão", R.drawable.carne1,"35min",
              listOf(
                  "1 Kg de camarão branco limpo",
                  "Azeite de oliva",
@@ -27,7 +24,7 @@ class ReceitaAdapter() :RecyclerView.Adapter<ReceitaAdapter.ReceitasViewHolder>(
                  "Salsinha e coentro a gosto",
              )
          ),
-         Receita("panqueca de carne moída",R.drawable.carne2,"45min",
+         Receita(1,"panqueca de carne moída", R.drawable.carne2,"45min",
                  listOf(
                      "1 e 1/2 xícara (chá) de farinha de trigo",
                      "1 xícara (chá) de leite",
@@ -38,7 +35,7 @@ class ReceitaAdapter() :RecyclerView.Adapter<ReceitaAdapter.ReceitasViewHolder>(
                      "2 colheres (sopa) de cebola picada ou ralada",
                  )
          ),
-         Receita("rocambole de carne moída",R.drawable.carne3,"25min",
+         Receita(2,"rocambole de carne moída", R.drawable.carne3,"25min",
                  listOf(
                      "1/2 kg de carne moída",
                      "1 pacote de sopa de cebola",
@@ -48,7 +45,7 @@ class ReceitaAdapter() :RecyclerView.Adapter<ReceitaAdapter.ReceitasViewHolder>(
                      "sal a gosto",
                  )
          ),
-         Receita("escondidinho de carne seca",R.drawable.carne4,"50min",
+         Receita(3,"escondidinho de carne seca", R.drawable.carne4,"50min",
              listOf(
                  "1 kg de mandioca cozida",
                  "1 lata de creme de leite com soro",
@@ -78,7 +75,7 @@ class ReceitaAdapter() :RecyclerView.Adapter<ReceitaAdapter.ReceitasViewHolder>(
                )
 
                itemView.setOnClickListener {
-                   val intent = Intent(it.context,DetalhesActivity::class.java )
+                   val intent = Intent(it.context, DetalhesActivity::class.java )
                     var  extras = intent.putExtra("receita",receita)
                     ContextCompat.startActivity(it.context,intent,null)
                }

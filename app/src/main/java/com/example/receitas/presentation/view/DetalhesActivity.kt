@@ -1,14 +1,8 @@
-package com.example.receitas
+package com.example.receitas.presentation.view
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Parcelable
-import android.view.LayoutInflater
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import com.example.receitas.domain.model.Receita
 import com.example.receitas.databinding.ActivityDetalhesBinding
 
 class DetalhesActivity : AppCompatActivity() {
