@@ -1,4 +1,4 @@
-package com.example.receitas.data.service.`interface`
+package com.example.receitas.data.service.interf
 
 import com.example.receitas.data.model.ReceitaData
 

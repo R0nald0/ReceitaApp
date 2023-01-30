@@ -1,4 +1,4 @@
-package com.example.receitas.data.repository.`interface`
+package com.example.receitas.data.repository.interf
 
 import com.example.receitas.domain.model.Receita
 

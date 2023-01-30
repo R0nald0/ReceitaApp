@@ -8,57 +8,16 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.receitas.R
 import com.example.receitas.databinding.RcvItemLayoutBinding
 import com.example.receitas.domain.model.Receita
+import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.view.DetalhesActivity
 
 class ReceitaAdapter() :RecyclerView.Adapter<ReceitaAdapter.ReceitasViewHolder>(){
+    var listReceita = listOf<ReceitaView>()
+    fun adicionarLista(lista : MutableList<ReceitaView> ){
+         listReceita = lista
+         notifyDataSetChanged()
+    }
 
-     var listReceita = mutableListOf<Receita>(
-         Receita(0,"escondidinho de Camarão", R.drawable.carne1,"35min",
-             listOf(
-                 "1 Kg de camarão branco limpo",
-                 "Azeite de oliva",
-                 "2 dentes de alho picados ou amassados",
-                 "Sal a gosto",
-                 "1 cebola média picada",
-                 "1 tomate grande picado",
-                 "Salsinha e coentro a gosto",
-             )
-         ),
-         Receita(1,"panqueca de carne moída", R.drawable.carne2,"45min",
-                 listOf(
-                     "1 e 1/2 xícara (chá) de farinha de trigo",
-                     "1 xícara (chá) de leite",
-                     "2 ovos",
-                     "4 colheres (sopa) de óleo",
-                     "sal á gosto",
-                     "300 g de carne moída",
-                     "2 colheres (sopa) de cebola picada ou ralada",
-                 )
-         ),
-         Receita(2,"rocambole de carne moída", R.drawable.carne3,"25min",
-                 listOf(
-                     "1/2 kg de carne moída",
-                     "1 pacote de sopa de cebola",
-                     "presunto fatiado",
-                     "queijo fatiado",
-                     "tempero verde",
-                     "sal a gosto",
-                 )
-         ),
-         Receita(3,"escondidinho de carne seca", R.drawable.carne4,"50min",
-             listOf(
-                 "1 kg de mandioca cozida",
-                 "1 lata de creme de leite com soro",
-                 "2 colheres de margarina",
-                 "1/2 kg de carne-seca dessalgada e cozida",
-                 "1 cebola média picadinha",
-                 "4 dentes de alho esmagados",
-                 "2 tomates sem casca e picados",
-                 "sal e pimenta a gosto",
-                 "queijo ralado a gosto",
-              )
-             ),
-     )
 
      inner class  ReceitasViewHolder(item:RcvItemLayoutBinding) : RecyclerView.ViewHolder(item.root){
 
@@ -67,10 +26,10 @@ class ReceitaAdapter() :RecyclerView.Adapter<ReceitaAdapter.ReceitasViewHolder>(
            init {
                itembinding = item
            }
-            fun bind(receita: Receita){
+            fun bind(receita: ReceitaView){
                   itembinding.idTxvTituloReceita.text = receita.titulo.uppercase()
                   itembinding.idTxvTempoReceita.text =receita.tempo
-                itembinding.idImvReceirta.setImageDrawable(
+                 itembinding.idImvReceirta.setImageDrawable(
                    ContextCompat.getDrawable(itemView.context,receita.Imagem)
                )
 

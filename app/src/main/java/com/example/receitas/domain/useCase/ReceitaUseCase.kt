@@ -1,11 +1,16 @@
 package com.example.receitas.domain.useCase
 
 import android.util.Log
-import com.example.receitas.data.repository.`interface`.IRepository
+import com.example.receitas.data.repository.interf.IRepository
 import com.example.receitas.domain.model.Receita
-import com.example.receitas.domain.model.`interface`.IReceitaUseCase
+import com.example.receitas.domain.interf.IReceitaUseCase
+import com.example.receitas.mapReceita.MapReceita
+import com.example.receitas.presentation.model.ReceitaView
+import javax.inject.Inject
 
-class ReceitaUseCase(private val repository: IRepository) :IReceitaUseCase{
+class ReceitaUseCase @Inject constructor(
+    private val repository: IRepository
+    ) : IReceitaUseCase {
     override suspend fun listarReceitar(): List<Receita>? {
          try {
              val listReceita = repository.recuperarListaReceitas()
@@ -19,21 +24,23 @@ class ReceitaUseCase(private val repository: IRepository) :IReceitaUseCase{
          }
     }
 
-    override suspend fun recuperaReceitaPorId(id: Int): Receita {
+    override suspend fun recuperaReceitaPorId(id: Int): ReceitaView {
            try {
                val receita = repository.recuperaReceitaPorId(id)
                Log.i("Receita-", "recuperarReceitaid: ${receita.titulo}")
-               return receita
+                   val receitaView = MapReceita.receitaToReceitaView(receita)
+               return receitaView
            }catch(ex :Exception){
                throw Exception("Receita nao encontrada")
            }
     }
 
-    override suspend fun criarReceita(receita: Receita): Receita {
+    override suspend fun criarReceita(receita: Receita): ReceitaView {
         try {
             val receitaCriada = repository.criarReceita(receita)
             Log.i("Receita-", "criarReceita: ${receitaCriada.titulo}")
-             return receitaCriada
+                 val receitaVI=MapReceita.receitaToReceitaView(receita)
+             return receitaVI
         }catch (ex:Exception){
             throw Exception("Receita nao encontrada")
         }
