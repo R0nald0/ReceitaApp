@@ -1,51 +1,89 @@
 package com.example.receitas.domain.useCase
 
 import android.util.Log
+import com.example.receitas.constant.Const
+import com.example.receitas.data.model.Dto.Area
+import com.example.receitas.data.model.Dto.MealItem
 import com.example.receitas.data.repository.interf.IRepository
 import com.example.receitas.domain.model.Receita
 import com.example.receitas.domain.interf.IReceitaUseCase
 import com.example.receitas.mapReceita.MapReceita
 import com.example.receitas.presentation.model.ReceitaView
+
+
 import javax.inject.Inject
 
 class ReceitaUseCase @Inject constructor(
     private val repository: IRepository
     ) : IReceitaUseCase {
-    override suspend fun listarReceitar(): List<Receita>? {
+
+    override suspend fun listarArea(): List<Area> {
+          try {
+              return repository.recuperarListaArea()
+          }catch(ex:Exception){
+               throw Exception("erro a :${ex.message}")
+          }
+    }
+    override suspend fun listarReceitar(): List<Receita> {
          try {
              val listReceita = repository.recuperarListaReceitas()
-             listReceita.forEach {
-                 Log.i("Receita-", "recuperarListaReceitasUSECASE: ${it.titulo}")
-             }
              return listReceita
          }catch (ex:Exception){
              Log.i("ERRO", "listarReceitar: ${ex.message}")
-             throw Exception("Erro ao recuperar lista")
+             throw Exception("Erro ao recuperar lista  ${ex.message} -- ${ex.stackTrace}" )
          }
     }
 
-    override suspend fun recuperaReceitaPorId(id: Int): ReceitaView {
-           try {
-               val receita = repository.recuperaReceitaPorId(id)
-               Log.i("Receita-", "recuperarReceitaid: ${receita.titulo}")
-                   val receitaView = MapReceita.receitaToReceitaView(receita)
-               return receitaView
-           }catch(ex :Exception){
-               throw Exception("Receita nao encontrada")
-           }
+    override suspend fun recuperarReceitasPorArea(areaName: String): List<Receita> {
+          try {
+              val listaReceita = repository.recuperarReceitasPorArea(areaName)
+              return  listaReceita
+          }catch (ex:Exception){
+               Const.exibilog("eerro : ${ex.message}}")
+          }
+
+        return  listOf()
     }
 
-    override suspend fun criarReceita(receita: Receita): ReceitaView {
+    /*
+    * criar classe de estado para gerenciar estado da lista
+    *
+    * */
+    override suspend fun getReceitaByName(receita: Receita): ReceitaView {
         try {
-            val receitaCriada = repository.criarReceita(receita)
-            Log.i("Receita-", "criarReceita: ${receitaCriada.titulo}")
-                 val receitaVI=MapReceita.receitaToReceitaView(receita)
-             return receitaVI
+            val receitaViwe =  repository.recuperaReceitaPorNome(receita.titulo)
+            if (receitaViwe !=null){
+                return  MapReceita.receitaToReceitaView(receitaViwe)
+            }else{
+                return  this.getReceitaById(receita)
+            }
+            return  ReceitaView("",-1,"",1,"", "","", emptyList())
+
         }catch (ex:Exception){
-            throw Exception("Receita nao encontrada")
+            throw Exception("Errro ao recuperar Receita :${ex.message}")
         }
     }
+    override suspend fun getReceitaById(receita: Receita): ReceitaView {
+        try {
+          val receitaViwe =  repository.recuperaReceitaId(receita)
+             if (receitaViwe !=null){
+                 return  MapReceita.receitaToReceitaView(receitaViwe)
+             }
+            return  ReceitaView("",-1,"",1,"", "","", emptyList())
 
+        }catch (ex:Exception){
+            throw Exception("Errro ao recuperar Receita :${ex.message}")
+        }
+    }
+    override suspend fun criarReceita(receita: Receita): Boolean {
+        try {
+            val receitaCriada = repository.criarReceita(receita)
+            Log.i("INFO_", "criarReceita: ${receita}")
+            return  receitaCriada
+        }catch (ex:Exception){
+            throw Exception("Erro ao criar Receita: ${ex.message} -- ${ex.stackTrace} ")
+        }
+    }
     override suspend fun atualizarReceita(id: Int, receita: Receita): Receita {
              try {
                  val receitaAtualizada = repository.atualizarReceita(id,receita)
@@ -57,13 +95,12 @@ class ReceitaUseCase @Inject constructor(
 
     }
 
-    override suspend fun deletarReceita(id: Int): Boolean {
+    override suspend fun deletarReceita(receita: Receita): Boolean {
+
         try {
-           val resultado = repository.deletarReceita(id)
-            Log.i("Receita-", "deletarReceita: ${resultado} ")
-            return true
-        }catch (ex:Exception){
-            throw Exception("Erro ao deletar Receita")
+            return repository.deletarReceita(receita)
+        } catch (ex: Exception) {
+            throw Exception("Erro ao deletar Receita: ${ex.message}")
         }
     }
 

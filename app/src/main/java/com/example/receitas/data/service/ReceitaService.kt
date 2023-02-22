@@ -4,14 +4,14 @@ import com.example.receitas.R
 import com.example.receitas.data.model.ReceitaData
 import com.example.receitas.data.service.interf.IServiceReceita
 
-class ReceitaService :IServiceReceita{
+class ReceitaService {
     private var listReceita = mutableListOf(
         ReceitaData().apply {
               this.idReceita = 0
               this.nome = "escondidinho de Camarão"
-            this.image =R.drawable.carne1
-            this.time ="35min"
-            this.ingrediente = listOf(
+              this.image =R.drawable.carne1
+              this.time ="35min"
+              this.ingrediente = listOf(
                 "1 Kg de camarão branco limpo",
                 "Azeite de oliva",
                 "2 dentes de alho picados ou amassados",
@@ -19,7 +19,7 @@ class ReceitaService :IServiceReceita{
                 "1 cebola média picada",
                 "1 tomate grande picado",
                 "Salsinha e coentro a gosto",
-            )
+            )as  MutableList
 
         },
         ReceitaData().apply {
@@ -35,7 +35,7 @@ class ReceitaService :IServiceReceita{
                     "sal á gosto",
                     "300 g de carne moída",
                     "2 colheres (sopa) de cebola picada ou ralada",
-                )
+                )as  MutableList
 
         },
         ReceitaData().apply {
@@ -50,7 +50,7 @@ class ReceitaService :IServiceReceita{
                 "queijo fatiado",
                 "tempero verde",
                 "sal a gosto",
-            )
+            )as  MutableList
         },
         ReceitaData().apply {
               this.idReceita =3
@@ -67,33 +67,32 @@ class ReceitaService :IServiceReceita{
                 "2 tomates sem casca e picados",
                 "sal e pimenta a gosto",
                 "queijo ralado a gosto",
-            )
+            )as  MutableList
         },
     )
-
-    override  fun getAll(): List<ReceitaData> {
+        fun getAll(): List<ReceitaData> {
          return listReceita
     }
 
-    override suspend fun get(id: Int): ReceitaData {
+     suspend fun get(id: Int): ReceitaData {
            return  listReceita.get(id)
     }
 
-    override suspend fun post(receita: ReceitaData): ReceitaData {
+     suspend fun post(receita: ReceitaData): Boolean {
            if (receita !=null){
                 receita.idReceita = listReceita.size
                listReceita.add(receita)
-               return receita
+               return true
            }
-        return ReceitaData()
+        return false
     }
 
-    override suspend fun putch(id: Int, receitaData: ReceitaData): ReceitaData {
+     suspend fun putch(id: Int, receitaData: ReceitaData): ReceitaData {
            var  receitaAtualizada = listReceita.set(id,receitaData)
           return  receitaAtualizada
     }
 
-    override suspend fun delete(id: Int): Boolean {
+     suspend fun delete(id: Int): Boolean {
             if (id <= listReceita.size){
                 listReceita.removeAt(id)
                 return true
