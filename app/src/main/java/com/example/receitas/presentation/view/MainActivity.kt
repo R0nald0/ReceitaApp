@@ -1,37 +1,30 @@
 package com.example.receitas.presentation.view
 
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 
 import android.view.WindowManager
-import android.widget.LinearLayout
+import android.widget.SearchView
 
 import android.widget.Toast
 import androidx.activity.viewModels
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.receitas.R
-import com.example.receitas.adapter.AreaListAdapter
-import com.example.receitas.adapter.ReceitaAdapter
-import com.example.receitas.adapter.UserReceitasAdapter
-import com.example.receitas.constant.Const
+import com.example.receitas.domain.adapter.AreaListAdapter
+import com.example.receitas.domain.adapter.ReceitaAdapter
+import com.example.receitas.domain.adapter.UserReceitasAdapter
+import com.example.receitas.shared.constant.Const
 import com.example.receitas.data.model.Dto.Area
-import com.example.receitas.data.model.Dto.MealAreaList
-import com.example.receitas.data.retrofiApi.RetrofitGetApi
-import com.example.receitas.data.retrofiApi.TheMealApi
 import com.example.receitas.databinding.ActivityMainBinding
 import com.example.receitas.databinding.CadastrarReceitaLayoutBinding
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.MainViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import retrofit2.Response
 
 
 @AndroidEntryPoint
@@ -40,53 +33,41 @@ class MainActivity : AppCompatActivity() {
      private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
-    private var adapter :ReceitaAdapter? = null
-    private var areaAdapter :AreaListAdapter? = null
-    private var userReceitasAdapter :UserReceitasAdapter? = null
+    private var adapter : ReceitaAdapter? = null
+    private var areaAdapter : AreaListAdapter? = null
+    private var userReceitasAdapter : UserReceitasAdapter? = null
     private var linearLayoutManager :LinearLayoutManager? = null
 
-    private val viewModel by viewModels<MainViewModel>()
+    private val mainViewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-
-     /*   rcView =findViewById(R.id.idRcView)
-        rcView.adapter = ReceitaAdapter()
-        rcView.layoutManager =LinearLayoutManager(this)
-        rcView.addItemDecoration(DividerItemDecoration(this,LinearLayoutManager.VERTICAL))
-*/
         initAdpaters()
         initObservers()
         initListeners()
 
 
-        binding.fabAdicionar.setOnClickListener {
-            viewModel.criarReceita()
-            // exibirDialog()
 
-        }
     }
 
-    fun exibirDialog(){
-        val diolog = BottomSheetDialog(this,R.style.BottomSheetDialogg).apply {
-             this.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        }
-
-        val bottomSheetDiaolog : CadastrarReceitaLayoutBinding =
-                    CadastrarReceitaLayoutBinding.inflate(layoutInflater,null,false)
-        diolog.setContentView(bottomSheetDiaolog.root)
-        diolog.show()
+    override fun onStart() {
+        super.onStart()
+        mainViewModel.listar()
+        mainViewModel.listarAreas()
+        mainViewModel.recuperarArea("Unknown")
     }
+
+
 
     fun initAdpaters(){
 
         adapter = ReceitaAdapter{receitaView->
-            viewModel.deletarTodos(receitaView)
+            mainViewModel.deletarTodos(receitaView)
         }
         areaAdapter = AreaListAdapter{
-            viewModel.recuperarArea(it)
+            mainViewModel.recuperarArea(it)
         }
         userReceitasAdapter = UserReceitasAdapter {
 
@@ -95,48 +76,41 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun initObservers(){
-        viewModel.listaReceitaLiveData.observe(this){
+        mainViewModel.listaReceitaLiveData.observe(this){
             if (it !=null ){
                 adapter!!.adicionarLista( it as MutableList<ReceitaView>)
             }else{
-                Toast.makeText(this, "Lista vazia", Toast.LENGTH_LONG).show()
-            }
-        }
-        viewModel.userListReceita.observe(this){
-             if (it.isNotEmpty()){
-                 userReceitasAdapter?.carregarListaDeReceitas(it as MutableList<ReceitaView>)
-             }
-        }
-
-        viewModel.areas.observe(this){
-            if (it != null){
-                areaAdapter?.addList(it as MutableList<Area>)
-            }else{
-                Toast.makeText(this, "Lista Area vazia", Toast.LENGTH_LONG).show()
+                showToast("Lista vazia")
             }
         }
 
-        viewModel.listCarregada.observe(this){
-             if (it == true){
-                 Toast.makeText(this, "carregou", Toast.LENGTH_LONG).show()
-
+        mainViewModel.resultadoListConsultaLiveData.observe(this){
+             if (it.sucesso){
+                    if (it.list.isNotEmpty()){
+                        userReceitasAdapter?.carregarListaDeReceitas(it.list as MutableList<ReceitaView>)
+                        binding.txvListaReceitaVaziaTexto.visibility =View.GONE
+                        binding.txvCriarReceita.visibility =View.GONE
+                    }else{
+                        binding.txvListaReceitaVaziaTexto.visibility =View.VISIBLE
+                        binding.txvCriarReceita.visibility =View.VISIBLE
+                    }
              }else{
-                 Toast.makeText(this, "Carregando..", Toast.LENGTH_LONG).show()
+                 showToast(it.mensagem)
              }
         }
-        viewModel.listVazia.observe(this){
-            if (it ==true){
-                Toast.makeText(this, "Lista de receitas user esta vazia", Toast.LENGTH_LONG).show()
-                binding.txvListaReceitaVaziaTexto.visibility = View.VISIBLE
-                binding.txvCriarReceita.visibility = View.VISIBLE
+
+        mainViewModel.areaRsultadoConsulta.observe(this){
+            if (it.sucesso){
+                areaAdapter?.addList(it.list as MutableList<Area>)
             }else{
-                Toast.makeText(this, "Lista de receitas user contem receitas", Toast.LENGTH_LONG).show()
-                binding.txvListaReceitaVaziaTexto.visibility = View.GONE
-                binding.txvCriarReceita.visibility = View.GONE
+             showToast(it.mensagem)
             }
         }
 
     }
+   fun showToast(messenge :String){
+       Toast.makeText(this, messenge, Toast.LENGTH_LONG).show()
+   }
 
     fun initListeners(){
         with(binding){
@@ -150,9 +124,26 @@ class MainActivity : AppCompatActivity() {
             rcvUserReceitaList.layoutManager= LinearLayoutManager(this@MainActivity,LinearLayoutManager.HORIZONTAL,false)
 
             txvCriarReceita.setOnClickListener {
-                viewModel.criarReceita()
+            //    mainViewModel.criarReceita()
             }
+            imgButtonAddReceita.setOnClickListener {
+               startActivity(Intent(this@MainActivity,SalvarEditarActivity::class.java))
+            }
+
             searchViewBtn.queryHint ="Buscar receita"
+
+            searchViewBtn.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                TODO("Not yet implemented")
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+               Const.exibilog("${newText}")
+               return true
+            }
+
+        } )
+
         }
     }
 

@@ -44,7 +44,24 @@ android {
 
 dependencies {
     implementation 'androidx.core:core-ktx:+'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     def lifecycle_version = "2.5.0-alpha02"
+    def retrofi_versio = "2.9.0"
+
+    def ev_version = "1.0.4"
+
+    //Easy validatio
+    implementation "com.wajahatkarim:easyvalidation-core:$ev_version"
+
+    //MaskValidation
+    implementation("io.github.vicmikhailau:MaskedEditText:4.0.7")
+
+
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.8'
+    //retrofit
+    implementation "com.squareup.retrofit2:retrofit:$retrofi_versio"
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"

@@ -1,4 +1,5 @@
 package com.example.receitas.data.model
+import android.net.Uri
 import com.example.receitas.domain.model.Receita
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
@@ -10,7 +11,7 @@ class ReceitaData :RealmObject {
      var _idRealme : ObjectId = ObjectId()
      var idReceita: Int = 0
      var nome :String =""
-     var image : Int =0
+     var image : String =""
      var imageLink :String =""
      var time :String =""
      var instrucao :String = ""

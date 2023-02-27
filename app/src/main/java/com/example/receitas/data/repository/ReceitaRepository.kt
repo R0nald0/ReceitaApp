@@ -1,6 +1,6 @@
 package com.example.receitas.data.repository
 
-import com.example.receitas.constant.Const
+import com.example.receitas.shared.constant.Const
 import com.example.receitas.data.model.Dto.Area
 import com.example.receitas.data.model.Dto.MealItem
 import com.example.receitas.data.model.ReceitaData
@@ -87,6 +87,7 @@ class  ReceitaRepository @Inject constructor(
     }
 
     override  suspend fun criarReceita(receita: Receita): Boolean {
+        Const.exibilog("id receita  ${receita.idRealm}")
          val receitaData = MapReceita.rceitaToReceitaData(receita)
         return   service.post(receitaData)
     }

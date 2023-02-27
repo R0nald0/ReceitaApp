@@ -4,12 +4,12 @@ import com.example.receitas.R
 import com.example.receitas.data.model.ReceitaData
 import com.example.receitas.data.service.interf.IServiceReceita
 
-class ReceitaService {
-    private var listReceita = mutableListOf(
+/*class ReceitaService {
+  *//*  private var listReceita = mutableListOf(
         ReceitaData().apply {
               this.idReceita = 0
               this.nome = "escondidinho de Camarão"
-              this.image =R.drawable.carne1
+              this.image ="${R.drawable.carne1}"
               this.time ="35min"
               this.ingrediente = listOf(
                 "1 Kg de camarão branco limpo",
@@ -25,7 +25,7 @@ class ReceitaService {
         ReceitaData().apply {
             this.idReceita =1
             this.nome ="panqueca de carne moída"
-            this.image = R.drawable.carne2
+            this.image = "${ R.drawable.carne2 }"
             this.time = "45min"
             this.ingrediente = listOf(
                     "1 e 1/2 xícara (chá) de farinha de trigo",
@@ -41,7 +41,7 @@ class ReceitaService {
         ReceitaData().apply {
               this.idReceita =2
               this.nome = "rocambole de carne moída"
-              this.image = R.drawable.carne3
+              this.image = "${R.drawable.carne3}"
               this.time ="25min"
               this.ingrediente = listOf(
                 "1/2 kg de carne moída",
@@ -55,7 +55,7 @@ class ReceitaService {
         ReceitaData().apply {
               this.idReceita =3
              this.nome = "escondidinho de carne seca"
-            this.image = R.drawable.carne4
+            this.image = "${R.drawable.carne4}"
             this.time ="50min"
             this.ingrediente =listOf(
                 "1 kg de mandioca cozida",
@@ -69,7 +69,7 @@ class ReceitaService {
                 "queijo ralado a gosto",
             )as  MutableList
         },
-    )
+    )*//*
         fun getAll(): List<ReceitaData> {
          return listReceita
     }
@@ -100,5 +100,5 @@ class ReceitaService {
         return false
     }
 
-}
+}*/
 

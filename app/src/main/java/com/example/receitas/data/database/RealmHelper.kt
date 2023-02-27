@@ -1,7 +1,7 @@
 package com.example.receitas.data.database
 
 import android.util.Log
-import com.example.receitas.constant.Const
+import com.example.receitas.shared.constant.Const
 import com.example.receitas.data.model.ReceitaData
 import com.example.receitas.data.service.interf.IServiceReceita
 import io.realm.kotlin.Realm
