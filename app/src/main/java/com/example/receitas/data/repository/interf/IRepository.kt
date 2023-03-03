@@ -8,7 +8,7 @@ interface IRepository {
     suspend  fun recuperarListaReceitas():List<Receita>
     suspend fun recuperarReceitasPorArea(areaName: String): List<Receita>
     suspend  fun recuperarListaArea():List<Area>
-    suspend  fun recuperarListaReceitasApi(e:String):List<Receita>
+    suspend  fun recuperarListaReceitasApi(areaName:String):List<Receita>
     suspend fun recuperaReceitaPorNome(nomeReceita:String):Receita?
     suspend fun recuperaReceitaId(receita: Receita):Receita?
     suspend fun criarReceita(receita: Receita):Boolean

@@ -34,7 +34,7 @@ class SalvarEditarActivity : AppCompatActivity() {
     private lateinit var resultaContract :  ActivityResultLauncher<String>
     private lateinit var permission :  ActivityResultLauncher<String>
     private lateinit var acessCamera :   ActivityResultLauncher<Intent>
-    private   var image :Uri? = null
+    private    var image :Uri? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,7 +59,7 @@ class SalvarEditarActivity : AppCompatActivity() {
             val tempo = binding.edtTempoPreparo.text.toString()
 
 
-            val receita =ReceitaViewCreate(tituloReceita,image.toString(),"${tempo}min",descricao, listOf(ingredientes))
+            val receita =ReceitaViewCreate(tituloReceita,image.toString(),"${tempo}min",descricao, ingredientes)
             mainViewModel.criarReceita(receita)
         }
     }
@@ -74,6 +74,8 @@ class SalvarEditarActivity : AppCompatActivity() {
         }
         acessCamera = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it != null){
+
+
                 val uri =HelperCamera.adicionarFotoPorCamera(it,this)
                   if (uri != null){
                      image = uri

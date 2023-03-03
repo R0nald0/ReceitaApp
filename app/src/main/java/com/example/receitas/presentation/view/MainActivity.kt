@@ -1,6 +1,7 @@
 package com.example.receitas.presentation.view
 
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -23,6 +24,7 @@ import com.example.receitas.databinding.ActivityMainBinding
 import com.example.receitas.databinding.CadastrarReceitaLayoutBinding
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.MainViewModel
+import com.example.receitas.shared.extension.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -47,8 +49,6 @@ class MainActivity : AppCompatActivity() {
         initAdpaters()
         initObservers()
         initListeners()
-
-
 
     }
 
@@ -80,14 +80,15 @@ class MainActivity : AppCompatActivity() {
             if (it !=null ){
                 adapter!!.adicionarLista( it as MutableList<ReceitaView>)
             }else{
-                showToast("Lista vazia")
+                applicationContext.showToast("Lista vazia")
             }
         }
 
         mainViewModel.resultadoListConsultaLiveData.observe(this){
              if (it.sucesso){
                     if (it.list.isNotEmpty()){
-                        userReceitasAdapter?.carregarListaDeReceitas(it.list as MutableList<ReceitaView>)
+                        userReceitasAdapter?.carregarListaDeReceitas(it.list as List<ReceitaView>)
+
                         binding.txvListaReceitaVaziaTexto.visibility =View.GONE
                         binding.txvCriarReceita.visibility =View.GONE
                     }else{
@@ -95,7 +96,7 @@ class MainActivity : AppCompatActivity() {
                         binding.txvCriarReceita.visibility =View.VISIBLE
                     }
              }else{
-                 showToast(it.mensagem)
+                 applicationContext.showToast(it.mensagem)
              }
         }
 
@@ -108,9 +109,7 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-   fun showToast(messenge :String){
-       Toast.makeText(this, messenge, Toast.LENGTH_LONG).show()
-   }
+
 
     fun initListeners(){
         with(binding){

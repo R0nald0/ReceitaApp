@@ -1,6 +1,7 @@
 package com.example.receitas.presentation.view
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -32,6 +33,7 @@ class DetalhesActivity : AppCompatActivity() {
         binding = ActivityDetalhesBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
         initObserver()
         initBinds()
 
@@ -61,6 +63,8 @@ class DetalhesActivity : AppCompatActivity() {
                 //TODO iniciar video
             }
 
+            setSupportActionBar(toolbar)
+            //TODO verificar bakcButton
         }
     }
 
@@ -97,21 +101,20 @@ class DetalhesActivity : AppCompatActivity() {
 
     fun  getViewReceita(receitaView: ReceitaView) {
         with(binding) {
+            Const.exibilog("reiceta image -- ${receitaView.Imagem}")
 
-            if(receitaView.ImageUrl.isEmpty())
+            if(receitaView.ImageUrl.isEmpty() && receitaView.Imagem == "null"){
+                Picasso.get().load(R.drawable.demos).into(idImgReceitaDetalhes)
+            }else if (receitaView.ImageUrl.isEmpty()){
                 Picasso.get().load(Uri.parse(receitaView.Imagem)).into(idImgReceitaDetalhes)
-                else Picasso.get().load(receitaView.ImageUrl).into(idImgReceitaDetalhes)
+            }
+            else Picasso.get().load(receitaView.ImageUrl).into(idImgReceitaDetalhes)
 
-            txvReceitaDescricao.text = receitaView.instrucao
+             txvReceitaInstrcoes.text = receitaView.instrucao
             TxvTempoReceitaDetalhes.text = receitaView.tempo
             TxvTituloReceitaDetalhes.text = receitaView.titulo.uppercase()
-            var ingrediente = ""
-            receitaView.ingredientes.map {
-               if(it.isNotEmpty()) {
-                   ingrediente += "- $it \n"
-                   idTxvIngredientesReceitaDetalhes.text = ingrediente
-               }
-            }
+            idTxvIngredientesReceitaDetalhes.text =receitaView.ingredientes
+
 
         }
     }

@@ -29,9 +29,8 @@ class  ReceitaRepository @Inject constructor(
         val listApi   = serviceApi.getMealsFromArea(areaName)
 
         if (listApi !=null){
-            var receitaData =ReceitaData()
             val listaReceit = listApi.map{
-                receitaData = MapReceita.convertMealListItemToReceitaData(it)
+               val receitaData = MapReceita.convertMealListItemToReceitaData(it)
                 MapReceita.receitaDataToReceita(receitaData)
             }
             return  listaReceit
@@ -46,9 +45,6 @@ class  ReceitaRepository @Inject constructor(
              val listaReceitas =listaReceitaApi.map {
                   MapReceita.receitaDataToReceita(it)
              }
-            listaReceitaApi.forEach {
-                Const.exibilog("receita view : ${it._idRealme}")
-            }
 
             return  listaReceitas
         }
@@ -60,7 +56,7 @@ class  ReceitaRepository @Inject constructor(
               val listaReceitaData = serviceApi.getMealsFromArea(areaName).map {
                   MapReceita.convertMealListItemToReceitaData(it)
               }
-            val listaReceita =listaReceitaData.map {
+            val listaReceita = listaReceitaData.map {
                  MapReceita.receitaDataToReceita(it)
               }
 
@@ -87,7 +83,7 @@ class  ReceitaRepository @Inject constructor(
     }
 
     override  suspend fun criarReceita(receita: Receita): Boolean {
-        Const.exibilog("id receita  ${receita.idRealm}")
+
          val receitaData = MapReceita.rceitaToReceitaData(receita)
         return   service.post(receitaData)
     }
@@ -99,7 +95,6 @@ class  ReceitaRepository @Inject constructor(
 
     override suspend fun deletarReceita(receita: Receita) :Boolean {
         val  receitaData = MapReceita.rceitaToReceitaData(receita)
-          Const.exibilog("id receita del ${receitaData._idRealme}")
           return service.delete(receitaData._idRealme)
     }
 

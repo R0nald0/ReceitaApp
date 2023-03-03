@@ -16,21 +16,19 @@ object MapReceita {
              this.nome = mealItem.strMeal
              this.imageLink =mealItem.strMealThumb
              this.instrucao = "${mealItem.strInstructions}"
-             this.ingrediente = mutableListOf(
-                 mealItem.strIngredient2,
-                 mealItem.strIngredient3,
-                 mealItem.strIngredient4,
-                 mealItem.strIngredient6,
-                 mealItem.strIngredient7,
-                 mealItem.strIngredient8,
-                 mealItem.strIngredient9,
-                 mealItem.strIngredient10,
-                 mealItem.strIngredient11,
-                 mealItem.strIngredient12,
-                 mealItem.strIngredient13,
-                 mealItem.strIngredient14,
-                 mealItem.strIngredient15,
-             )
+             this.ingrediente +="${mealItem.strIngredient1}\n" +
+                     "${mealItem.strIngredient2}\n" +
+                     "${ mealItem.strIngredient3}\n" +
+                     "${mealItem.strIngredient4}\n" +
+                     "${mealItem.strIngredient6}\n" +
+                     "${mealItem.strIngredient7}\n" +
+                     "${ mealItem.strIngredient8}\n"+
+                     "${ mealItem.strIngredient9}\n"+
+                     "${ mealItem.strIngredient10}\n"+
+                     "${ mealItem.strIngredient11}\n"+
+                     "${ mealItem.strIngredient12}\n"+
+                     "${ mealItem.strIngredient14}\n"+
+                     "${ mealItem.strIngredient15}\n"
          }
     }
     fun rceitaToReceitaData(receita: Receita):ReceitaData{
@@ -41,7 +39,7 @@ object MapReceita {
              this.time = receita.tempo
              this.instrucao = receita.instrucoes
              this.image =receita.Imagem
-             this.ingrediente = receita.ingredientes as MutableList<String>
+             this.ingrediente = receita.ingredientes
          }
     }
 

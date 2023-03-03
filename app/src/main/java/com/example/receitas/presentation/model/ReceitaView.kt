@@ -18,7 +18,7 @@ data class ReceitaView(
     var ImageUrl : String,
     var instrucao : String,
     var tempo :String,
-    var ingredientes: List<String>
+    var ingredientes: String
 ):Parcelable
 
 data class ReceitaViewCreate(
@@ -26,7 +26,7 @@ data class ReceitaViewCreate(
     var Imagem : String,
     var tempo :String,
     var instrucao :String,
-    var ingredientes: List<String>
+    var ingredientes: String
 )
 
 

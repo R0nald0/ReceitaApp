@@ -16,8 +16,8 @@ class RealmHelper :IServiceReceita{
    private val realmDb = Realm.open(config)
 
     override   fun getAll(): List<ReceitaData> {
-        val lista :RealmResults<ReceitaData> = realmDb.query<ReceitaData>().find()
-         return lista
+        val lista = realmDb.query<ReceitaData>().find()
+        return lista
     }
 
     override suspend fun get(objectId: ObjectId): ReceitaData {
@@ -34,14 +34,25 @@ class RealmHelper :IServiceReceita{
 
     override suspend fun post(receita: ReceitaData): Boolean {
 
+
          try {
             realmDb.write{
-                 copyToRealm(receita)
-                Log.i("Receita-", "RECEita db: ${receita.nome}")
+                this.copyToRealm(
+                    ReceitaData().apply {
+                        this.time = receita.time
+                        this.image =receita.image
+                        this.imageLink =receita.imageLink
+                        this.ingrediente = receita.ingrediente
+                        this.instrucao =receita.instrucao
+                        this.nome =receita.nome
+                    }
+                )
+
             }
             return true
 
         } catch (e :IllegalArgumentException){
+
             throw  IllegalArgumentException("Erro : ${e.message} -- ${e.stackTrace}")
         } catch (ex:Exception){
             throw Exception("erro ao salvar o usuario : ${ex.message} -- ${ex.stackTrace} ")
@@ -56,7 +67,6 @@ class RealmHelper :IServiceReceita{
         try {
             realmDb.write {
                 val  receita = this.query<ReceitaData>("_idRealme == $0",objectId).find().first()
-                Const.exibilog("id receita deletado :${receita._idRealme}")
                 delete(receita)
             }
             return true

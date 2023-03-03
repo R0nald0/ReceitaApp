@@ -36,7 +36,8 @@
         <activity
             android:name=".presentation.view.DetalhesActivity"
             android:exported="false"
-            android:parentActivityName=".presentation.view.MainActivity" />
+            android:parentActivityName=".presentation.view.MainActivity"
+             />
         <activity
             android:name=".presentation.view.MainActivity"
             android:exported="true">

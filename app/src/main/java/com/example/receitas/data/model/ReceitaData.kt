@@ -15,7 +15,7 @@ class ReceitaData :RealmObject {
      var imageLink :String =""
      var time :String =""
      var instrucao :String = ""
-     var ingrediente: MutableList<String> = mutableListOf()
+     var ingrediente: String =""
 }
 
 

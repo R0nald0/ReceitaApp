@@ -12,6 +12,6 @@ data class Receita(
      var ImagemUrl :String,
      var instrucoes :String,
      var tempo :String = "00",
-     var ingredientes: List<String>
+     var ingredientes: String
   )
 

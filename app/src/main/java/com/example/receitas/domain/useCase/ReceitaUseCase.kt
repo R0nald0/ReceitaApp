@@ -42,8 +42,6 @@ class ReceitaUseCase @Inject constructor(
                  listaReceitaview
              )
          }catch (ex:Exception){
-             Log.i("ERRO", "listarReceitar: ${ex.message}")
-
              throw Exception("Erro ao recuperar lista  ${ex.message} -- ${ex.stackTrace}" )
          }
     }
@@ -52,10 +50,9 @@ class ReceitaUseCase @Inject constructor(
               val listaReceita = repository.recuperarReceitasPorArea(areaName)
               return  listaReceita
           }catch (ex:Exception){
-               Const.exibilog("eerro : ${ex.message}}")
+            ex.stackTrace
+              return listOf()
           }
-
-        return  listOf()
     }
     override suspend fun getReceitaByName(receita: Receita): ReceitaView {
         try {
@@ -76,7 +73,7 @@ class ReceitaUseCase @Inject constructor(
              if (receitaViwe !=null){
                  return  MapReceita.receitaToReceitaView(receitaViwe)
              }
-            return  ReceitaView("",-1,"", "","", "","", emptyList())
+            return  ReceitaView("",-1,"", "","", "","", "")
 
         }catch (ex:Exception){
             throw Exception("Errro ao recuperar Receita :${ex.message}")
@@ -84,7 +81,7 @@ class ReceitaUseCase @Inject constructor(
     }
     override suspend fun criarReceita(receitaCreate: ReceitaViewCreate): ResultadoOperacaoDb {
         try {
-             Const.exibilog("imagem : ${receitaCreate.Imagem}")
+
 
             if ( receitaCreate.titulo.isEmpty())
                 return ResultadoOperacaoDb(false,"preenchos campos o nome")
@@ -95,6 +92,8 @@ class ReceitaUseCase @Inject constructor(
                 return ResultadoOperacaoDb(false,"preenchas o tempo")
             if (receitaCreate.instrucao.isEmpty())
                 return ResultadoOperacaoDb(false,"preenchos as instrucoes")
+
+
 
 
             val receita = MapReceita.receitaViewCreateToReceita(receitaCreate)
@@ -121,11 +120,11 @@ class ReceitaUseCase @Inject constructor(
 
     }
     override suspend fun deletarReceita(receita: Receita): Boolean {
-
-        try {
-            return repository.deletarReceita(receita)
+        return try {
+            repository.deletarReceita(receita)
         } catch (ex: Exception) {
-            throw Exception("Erro ao deletar Receita: ${ex.message}")
+            ex.printStackTrace()
+            false
         }
     }
 
