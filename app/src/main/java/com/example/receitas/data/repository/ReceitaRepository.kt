@@ -17,6 +17,18 @@ class  ReceitaRepository @Inject constructor(
       private val serviceApi :ReceitaServiceApi
     ) :IRepository{
 
+    override suspend fun perquisarReceita(pequisa: String): List<Receita> {
+         val retorno = service.searchByName(pequisa)
+        if (retorno.isNotEmpty()){
+              val listReceita =  retorno.map {
+                    MapReceita.receitaDataToReceita(it)
+              }
+            return  listReceita
+        }
+
+        return listOf()
+    }
+
     override suspend fun recuperarListaArea(): List<Area> {
           val listArea = serviceApi.getArealMeal()
          if (listArea !=null){

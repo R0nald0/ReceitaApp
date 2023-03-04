@@ -32,10 +32,12 @@
 
         <activity
             android:name=".presentation.view.SalvarEditarActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".presentation.view.MainActivity"/>
         <activity
             android:name=".presentation.view.DetalhesActivity"
-            android:exported="false"
+            android:theme="@style/AppThemeDetalhes"
+            android:exported="true"
             android:parentActivityName=".presentation.view.MainActivity"
              />
         <activity

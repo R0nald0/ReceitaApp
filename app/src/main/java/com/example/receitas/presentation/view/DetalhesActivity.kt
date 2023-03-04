@@ -32,8 +32,7 @@ class DetalhesActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDetalhesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-
+        supportActionBar?.title=""
         initObserver()
         initBinds()
 
@@ -44,13 +43,10 @@ class DetalhesActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 scrollView2.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
                     if (scrollY > oldScrollY  ) {
-                        //idBtnVoltarDetalhes.visibility = View.GONE
                          btnPlay.visibility =View.GONE
                     } else {
-                        //idBtnVoltarDetalhes.visibility = View.VISIBLE
-                        btnPlay.visibility =View.VISIBLE
+                       btnPlay.visibility =View.VISIBLE
                     }
-
                 }
             } else {
                 TODO("VERSION.SDK_INT < M")
@@ -63,8 +59,6 @@ class DetalhesActivity : AppCompatActivity() {
                 //TODO iniciar video
             }
 
-            setSupportActionBar(toolbar)
-            //TODO verificar bakcButton
         }
     }
 
@@ -92,7 +86,6 @@ class DetalhesActivity : AppCompatActivity() {
         }
 
         return if (receita != null) {
-            Const.exibilog("receita : ${receita.idRealm}")
             receita
         }
         else return null
@@ -101,8 +94,6 @@ class DetalhesActivity : AppCompatActivity() {
 
     fun  getViewReceita(receitaView: ReceitaView) {
         with(binding) {
-            Const.exibilog("reiceta image -- ${receitaView.Imagem}")
-
             if(receitaView.ImageUrl.isEmpty() && receitaView.Imagem == "null"){
                 Picasso.get().load(R.drawable.demos).into(idImgReceitaDetalhes)
             }else if (receitaView.ImageUrl.isEmpty()){
@@ -110,12 +101,10 @@ class DetalhesActivity : AppCompatActivity() {
             }
             else Picasso.get().load(receitaView.ImageUrl).into(idImgReceitaDetalhes)
 
-             txvReceitaInstrcoes.text = receitaView.instrucao
+            txvReceitaInstrcoes.text = receitaView.instrucao
             TxvTempoReceitaDetalhes.text = receitaView.tempo
             TxvTituloReceitaDetalhes.text = receitaView.titulo.uppercase()
             idTxvIngredientesReceitaDetalhes.text =receitaView.ingredientes
-
-
         }
     }
 

@@ -20,20 +20,16 @@ class RealmHelper :IServiceReceita{
         return lista
     }
 
-    override suspend fun get(objectId: ObjectId): ReceitaData {
-        try {
-            var receita = ReceitaData()
-      realmDb.write {
-             receita  = this.query<ReceitaData>("_idRealme==$0",objectId).find().first()
+    override suspend fun searchByName(title: String): List<ReceitaData> {
+         try {
+             val receita = realmDb.query<ReceitaData>("nome CONTAINS  $0",title).find()
+             return receita
+         }catch (ex : Exception){
+            return listOf<ReceitaData>()
          }
-            return receita
-        }catch (e:Exception){
-            throw  Exception("erro ao buscar ${e.message}"  )
-        }
     }
 
     override suspend fun post(receita: ReceitaData): Boolean {
-
 
          try {
             realmDb.write{

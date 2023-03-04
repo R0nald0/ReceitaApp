@@ -1,15 +1,12 @@
 package com.example.receitas.domain.useCase
 
-import android.net.Uri
 import android.util.Log
-import com.example.receitas.R
-import com.example.receitas.shared.constant.Const
-import com.example.receitas.data.model.Dto.Area
-import com.example.receitas.data.model.Dto.MealItem
 import com.example.receitas.data.repository.interf.IRepository
 import com.example.receitas.domain.model.Receita
 import com.example.receitas.domain.interf.IReceitaUseCase
-import com.example.receitas.domain.results.ResultConsultas
+
+import com.example.receitas.domain.results.ResultConsultasAreas
+import com.example.receitas.domain.results.ResultConsultasReceita
 import com.example.receitas.domain.results.ResultadoOperacaoDb
 import com.example.receitas.mapReceita.MapReceita
 import com.example.receitas.presentation.model.ReceitaView
@@ -22,27 +19,34 @@ class ReceitaUseCase @Inject constructor(
     private val repository: IRepository
     ) : IReceitaUseCase {
 
-    override suspend fun listarArea():ResultConsultas {
+    override suspend fun listarArea():ResultConsultasAreas {
+
           try {
               val areas  = repository.recuperarListaArea()
-              return   ResultConsultas(true,"Sucesso ao carregar lista de areas",areas)
+              return   ResultConsultasAreas(true,"Sucesso ao carregar lista de areas",areas)
 
           }catch(ex:Exception){
-              ResultConsultas(false,"erro ao carregar lista de areas", listOf())
+              ResultConsultasAreas(false,"erro ao carregar lista de areas", listOf())
                throw Exception("erro a :${ex.message}")
           }
     }
-    override suspend fun listarReceitar(): ResultConsultas {
+    override suspend fun listarReceita(): ResultConsultasReceita {
          try {
              val listReceita = repository.recuperarListaReceitas()
              val listaReceitaview = MapReceita.toListReceitaView(listReceita)
-             return  ResultConsultas(
+             return  ResultConsultasReceita(
                  true,
                  "Lista carregada com sucesso",
                  listaReceitaview
              )
+
          }catch (ex:Exception){
-             throw Exception("Erro ao recuperar lista  ${ex.message} -- ${ex.stackTrace}" )
+             ex.stackTrace
+             return  ResultConsultasReceita(
+                 true,
+                 "Erro ao recuperar lista  ${ex.message}",
+                 listOf()
+             )
          }
     }
     override suspend fun recuperarReceitasPorArea(areaName: String): List<Receita> {
@@ -127,5 +131,16 @@ class ReceitaUseCase @Inject constructor(
             false
         }
     }
+    override suspend fun pesquisarReceitaPorTitulo(tituloPesquisa: String): ResultConsultasReceita {
+        try {
+            val result =repository.perquisarReceita(tituloPesquisa)
+               val  listaReceitaView = MapReceita.toListReceitaView(result)
+                return ResultConsultasReceita(
+                    true,"Lista Carreagada com successo",listaReceitaView
+                )
 
+    }catch (ex :Exception){
+        ex.stackTrace
+      return  ResultConsultasReceita(false,"erro ${ ex.message}", listOf())
+    }}
 }

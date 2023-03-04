@@ -12,6 +12,7 @@ import android.widget.SearchView
 
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.receitas.R
@@ -22,6 +23,7 @@ import com.example.receitas.shared.constant.Const
 import com.example.receitas.data.model.Dto.Area
 import com.example.receitas.databinding.ActivityMainBinding
 import com.example.receitas.databinding.CadastrarReceitaLayoutBinding
+import com.example.receitas.domain.adapter.SearchListAdapter
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.MainViewModel
 import com.example.receitas.shared.extension.showToast
@@ -35,17 +37,21 @@ class MainActivity : AppCompatActivity() {
      private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
+
     private var adapter : ReceitaAdapter? = null
     private var areaAdapter : AreaListAdapter? = null
     private var userReceitasAdapter : UserReceitasAdapter? = null
-    private var linearLayoutManager :LinearLayoutManager? = null
+    private var searchListAdapter : SearchListAdapter? = null
+
+
+    private var linearLayoutManager :LinearLayoutManager? =  null
 
     private val mainViewModel by viewModels<MainViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
+        supportActionBar?.hide()
         initAdpaters()
         initObservers()
         initListeners()
@@ -59,8 +65,6 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.recuperarArea("Unknown")
     }
 
-
-
     fun initAdpaters(){
 
         adapter = ReceitaAdapter{receitaView->
@@ -72,6 +76,7 @@ class MainActivity : AppCompatActivity() {
         userReceitasAdapter = UserReceitasAdapter {
 
         }
+        searchListAdapter =SearchListAdapter()
 
     }
 
@@ -87,7 +92,7 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.resultadoListConsultaLiveData.observe(this){
              if (it.sucesso){
                     if (it.list.isNotEmpty()){
-                        userReceitasAdapter?.carregarListaDeReceitas(it.list as List<ReceitaView>)
+                        userReceitasAdapter?.carregarListaDeReceitas(it.list)
 
                         binding.txvListaReceitaVaziaTexto.visibility =View.GONE
                         binding.txvCriarReceita.visibility =View.GONE
@@ -107,6 +112,14 @@ class MainActivity : AppCompatActivity() {
              showToast(it.mensagem)
             }
         }
+        mainViewModel.pesquisaLiveData.observe(this){
+             if (it.sucesso){
+                 searchListAdapter?.carregarItemList(it.list)
+                 applicationContext.showToast(it.mensagem)
+             }else{
+                 applicationContext.showToast(it.mensagem)
+             }
+        }
 
     }
 
@@ -122,22 +135,36 @@ class MainActivity : AppCompatActivity() {
             rcvUserReceitaList.adapter=userReceitasAdapter
             rcvUserReceitaList.layoutManager= LinearLayoutManager(this@MainActivity,LinearLayoutManager.HORIZONTAL,false)
 
+            rcvSearchReceitas.adapter =searchListAdapter
+            rcvSearchReceitas.layoutManager =GridLayoutManager(this@MainActivity,2,)
+
             txvCriarReceita.setOnClickListener {
-            //    mainViewModel.criarReceita()
+                startActivity(Intent(this@MainActivity,SalvarEditarActivity::class.java))
             }
             imgButtonAddReceita.setOnClickListener {
                startActivity(Intent(this@MainActivity,SalvarEditarActivity::class.java))
             }
 
-            searchViewBtn.queryHint ="Buscar receita"
-
             searchViewBtn.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
-                TODO("Not yet implemented")
+                if (query !=null){
+                    mainViewModel.pesquisarReceita(query)
+                    binding.rcvSearchReceitas.visibility = View.VISIBLE
+                }
+                return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-               Const.exibilog("${newText}")
+                 if (newText !=null){
+                     mainViewModel.pesquisarReceita(newText)
+                     if(newText.length >0){
+                         binding.rcvSearchReceitas.visibility = View.VISIBLE
+                     }else{
+                         binding.rcvSearchReceitas.visibility =View.GONE
+                     }
+
+                 }
+
                return true
             }
 

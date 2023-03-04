@@ -13,4 +13,5 @@
     <color name="link_Color">#8C98EC</color>
     <color name="vermelho_forte">#F10E0E</color>
     <color name="vermelho_leve">#F13B3B</color>
+    <color name="vermelhoTrasnparent">#19E80808</color>
 </resources>

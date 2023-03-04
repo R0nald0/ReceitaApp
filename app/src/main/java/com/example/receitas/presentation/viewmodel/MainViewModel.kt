@@ -1,13 +1,16 @@
 package com.example.receitas.presentation.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.receitas.R
+
 import com.example.receitas.shared.constant.Const
-import com.example.receitas.data.model.Dto.Area
+
 import com.example.receitas.domain.interf.IReceitaUseCase
-import com.example.receitas.domain.results.ResultConsultas
+
+import com.example.receitas.domain.results.ResultConsultasAreas
+import com.example.receitas.domain.results.ResultConsultasReceita
 import com.example.receitas.domain.results.ResultadoOperacaoDb
 import com.example.receitas.mapReceita.MapReceita
 import com.example.receitas.presentation.model.ReceitaView
@@ -24,11 +27,12 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(
     private val  receitaUseCase: IReceitaUseCase
 ) : ViewModel() {
-        private val areasResultadoConsultadLiveData  = MutableLiveData<ResultConsultas>()
-        val areaRsultadoConsulta : MutableLiveData<ResultConsultas>
-        get() = areasResultadoConsultadLiveData
+       val resultadoListConsultaLiveData = MutableLiveData<ResultConsultasReceita>()
+       val pesquisaLiveData = MutableLiveData<ResultConsultasReceita>()
 
-         val resultadoListConsultaLiveData = MutableLiveData<ResultConsultas>()
+        private val areasResultadoConsultadLiveData  = MutableLiveData<ResultConsultasAreas>()
+        val areaRsultadoConsulta : LiveData<ResultConsultasAreas>
+        get() = areasResultadoConsultadLiveData
 
 
         private val areaNameObserve = MutableLiveData<String>()
@@ -52,7 +56,7 @@ class MainViewModel @Inject constructor(
 
     fun listar(){
            viewModelScope.launch(Dispatchers.IO) {
-               val resultado = receitaUseCase.listarReceitar()
+               val resultado = receitaUseCase.listarReceita()
                    resultadoListConsultaLiveData.postValue(resultado)
            }
 
@@ -85,8 +89,6 @@ class MainViewModel @Inject constructor(
                  if (receitaUseCase.deletarReceita(receita)){
                      Const.exibilog("${receitaView.titulo}")
                      Const.exibilog("id delte ${receitaView.titulo}")
-
-
                  }else{
                      Const.exibilog("Erro ao deletar")
                  }
@@ -95,6 +97,9 @@ class MainViewModel @Inject constructor(
     }
 
     fun pesquisarReceita(nomePesquisa:String){
-
+          viewModelScope.launch {
+             val resultadoPesquisa = receitaUseCase.pesquisarReceitaPorTitulo(nomePesquisa)
+              pesquisaLiveData.postValue(resultadoPesquisa)
+            }
     }
 }

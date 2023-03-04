@@ -14,4 +14,5 @@ interface IRepository {
     suspend fun criarReceita(receita: Receita):Boolean
     suspend fun atualizarReceita(id :Int,receita :Receita):Receita
     suspend fun deletarReceita(receita: Receita):Boolean
+    suspend fun  perquisarReceita(pequisa:String):List<Receita>
 }
