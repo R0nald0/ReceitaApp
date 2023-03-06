@@ -8,6 +8,6 @@ interface IServiceReceita {
 
      suspend fun searchByName(title :String): List<ReceitaData>
      suspend fun post(receita: ReceitaData): Boolean
-     suspend fun putch(id :Int,receitaData: ReceitaData): ReceitaData
-     suspend fun delete(uuid: ObjectId):Boolean
+     suspend fun putch(receitaData: ReceitaData): Boolean
+     suspend fun delete(objectId: ObjectId):Boolean
 }

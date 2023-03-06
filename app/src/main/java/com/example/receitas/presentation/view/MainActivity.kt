@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
     fun initAdpaters(){
 
         adapter = ReceitaAdapter{receitaView->
-            mainViewModel.deletarTodos(receitaView)
+
         }
         areaAdapter = AreaListAdapter{
             mainViewModel.recuperarArea(it)

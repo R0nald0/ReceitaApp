@@ -1,7 +1,7 @@
 package com.example.receitas.presentation.view
 
+import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -14,11 +14,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.MenuProvider
 import com.example.receitas.R
-import com.example.receitas.shared.constant.Const
-import com.example.receitas.domain.model.Receita
 import com.example.receitas.databinding.ActivityDetalhesBinding
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.DetalhesViewModel
+import com.example.receitas.shared.constant.Const
+import com.example.receitas.shared.extension.showToast
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -33,6 +33,7 @@ class DetalhesActivity : AppCompatActivity() {
         binding = ActivityDetalhesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.title=""
+
         initObserver()
         initBinds()
 
@@ -52,11 +53,16 @@ class DetalhesActivity : AppCompatActivity() {
                 TODO("VERSION.SDK_INT < M")
             }
 
-            imgBtnVoltar.setOnClickListener {
-                startActivity(Intent(this@DetalhesActivity,MainActivity::class.java))
-            }
+
             btnPlay.setOnClickListener {
                 //TODO iniciar video
+            }
+            imgBtnEditar.setOnClickListener {
+                editarReceita()
+            }
+            imgBtnDeletar.setOnClickListener {
+                 val receitaAtaul = getIntentExtraReceita()
+              showDialog(receitaAtaul)
             }
 
         }
@@ -64,11 +70,17 @@ class DetalhesActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.getReceitaByName(getNameReceita())
+        viewModel.getReceitaByName(getIntentExtraReceita())
+    }
+    fun editarReceita(){
+        val  receita = getIntentExtraReceita()
+        val intent =Intent(this,SalvarEditarActivity::class.java)
+        intent.putExtra(Const.TEXT_INTENT_EXTRAS_EDIT_RECEITA,receita)
+        startActivity(intent)
     }
 
- fun initObserver(){
-     viewModel.itemReceita?.observe(this){
+    fun initObserver(){
+     viewModel.receitaView?.observe(this){
          if (it != null){
              getViewReceita(it)
          }
@@ -76,22 +88,42 @@ class DetalhesActivity : AppCompatActivity() {
      viewModel.cerregandoLiveData.observe(this){
          // TODO  progressBar
      }
+        viewModel.resultOperacaoLiveDataDelete.observe(this){
+            if (it.sucesso){
+                finish()
+               applicationContext.showToast(it.mensagem)
+            }else{
+                applicationContext.showToast(it.mensagem)
+            }
+        }
  }
-    fun getNameReceita():ReceitaView?{
-        val  extra = intent.extras
+    fun getIntentExtraReceita():ReceitaView{
+        val extra = intent.extras
         val receita  = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            extra?.getParcelable("receita",ReceitaView::class.java)
+            extra?.getParcelable(Const.TEXT_INTENT_EXTRAS_CRIATE_RECEITA,ReceitaView::class.java)
         } else {
-            extra?.getParcelable<ReceitaView>("receita") as ReceitaView
+            extra?.getParcelable<ReceitaView>(Const.TEXT_INTENT_EXTRAS_CRIATE_RECEITA) as ReceitaView
         }
-
-        return if (receita != null) {
-            receita
-        }
-        else return null
+        if (receita != null)return receita
+         else{
+             finish()
+            throw  Exception("erro ao carregar dados")
+         }
 
     }
 
+    fun showDialog(receitaView: ReceitaView){
+
+        val dialog = AlertDialog.Builder(this)
+        dialog.setMessage("Deseja excluir a Receita de ${receitaView.titulo}?")
+            .setPositiveButton("Sim"){ di,p ->
+                    viewModel.deletar(receitaView)
+                di.dismiss()
+            }.setNegativeButton("Não"){di,pos->
+                di.dismiss()
+            }.create().show()
+
+    }
     fun  getViewReceita(receitaView: ReceitaView) {
         with(binding) {
             if(receitaView.ImageUrl.isEmpty() && receitaView.Imagem == "null"){

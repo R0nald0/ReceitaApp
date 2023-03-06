@@ -48,15 +48,28 @@ class RealmHelper :IServiceReceita{
             return true
 
         } catch (e :IllegalArgumentException){
-
             throw  IllegalArgumentException("Erro : ${e.message} -- ${e.stackTrace}")
         } catch (ex:Exception){
             throw Exception("erro ao salvar o usuario : ${ex.message} -- ${ex.stackTrace} ")
         }
     }
 
-    override suspend fun putch(id: Int, receitaData: ReceitaData): ReceitaData {
-        TODO("Not yet implemented")
+    override suspend fun putch(receitaData: ReceitaData): Boolean {
+          try {
+              realmDb.write {
+                  val receitaEdit = this.query<ReceitaData>("_idRealme == $0",receitaData._idRealme).find().first()
+                  if (receitaEdit !=null){
+                      receitaEdit .nome =receitaData.nome
+                      receitaEdit .image =receitaData.image
+                      receitaEdit .ingrediente =receitaData.ingrediente
+                      receitaEdit .time =receitaData.time
+                      receitaEdit .instrucao =receitaData.instrucao
+                  }
+              }
+              return true
+          }catch (ex:Exception){
+              throw Exception("${ex.message}")
+          }
     }
 
     override suspend fun delete(objectId: ObjectId): Boolean {

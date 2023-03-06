@@ -42,9 +42,7 @@ class MainViewModel @Inject constructor(
         val listaReceitaLiveData = MutableLiveData<List<ReceitaView>>()
         var receitasViews = mutableListOf<ReceitaView>()
 
-        private val resultadoOperacaoDbLiveData = MutableLiveData<ResultadoOperacaoDb>()
-        val resultadoOperacaoDb :MutableLiveData<ResultadoOperacaoDb>
-        get() = resultadoOperacaoDbLiveData
+
 
 
     fun listarAreas(){
@@ -73,28 +71,6 @@ class MainViewModel @Inject constructor(
 
     }
 
-    fun criarReceita(receitaViewCreate : ReceitaViewCreate){
-
-           Const.exibilog("receita name ${receitaViewCreate.titulo}")
-          viewModelScope.launch {
-             val resultado = receitaUseCase.criarReceita(receitaViewCreate)
-              resultadoOperacaoDbLiveData.postValue(resultado)
-          }
-
-    }
-    fun deletarTodos(receitaView: ReceitaView){
-              val receita = MapReceita.receitaViewToReceita(receitaView)
-
-            viewModelScope.launch {
-                 if (receitaUseCase.deletarReceita(receita)){
-                     Const.exibilog("${receitaView.titulo}")
-                     Const.exibilog("id delte ${receitaView.titulo}")
-                 }else{
-                     Const.exibilog("Erro ao deletar")
-                 }
-
-            }
-    }
 
     fun pesquisarReceita(nomePesquisa:String){
           viewModelScope.launch {

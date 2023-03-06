@@ -113,22 +113,23 @@ class ReceitaUseCase @Inject constructor(
             )
         }
     }
-    override suspend fun atualizarReceita(id: Int, receita: Receita): Receita {
+    override suspend fun atualizarReceita(receitaView: ReceitaView): ResultadoOperacaoDb {
              try {
-                 val receitaAtualizada = repository.atualizarReceita(id,receita)
-                 Log.i("Receita-", "atualizarReceita: ${receitaAtualizada.titulo}")
-                 return  receitaAtualizada
+                 val receita = MapReceita.receitaViewToReceita(receitaView)
+                 val receitaAtualizada = repository.atualizarReceita(receita)
+                 return  ResultadoOperacaoDb(receitaAtualizada,"Atualizado")
              }catch (ex :Exception){
-                 throw Exception("Erro ao Atualizar Receita")
+                 ex.printStackTrace()
+                 return  ResultadoOperacaoDb(false,"Erro ao Atualizar Receita ${ex.message}")
              }
-
     }
-    override suspend fun deletarReceita(receita: Receita): Boolean {
+    override suspend fun deletarReceita(receita: Receita): ResultadoOperacaoDb {
         return try {
-            repository.deletarReceita(receita)
+         val result =  repository.deletarReceita(receita)
+            ResultadoOperacaoDb(result,"Deletado com sucesso")
         } catch (ex: Exception) {
             ex.printStackTrace()
-            false
+          return  ResultadoOperacaoDb(false,"erro ao deletar")
         }
     }
     override suspend fun pesquisarReceitaPorTitulo(tituloPesquisa: String): ResultConsultasReceita {

@@ -12,7 +12,7 @@ interface IRepository {
     suspend fun recuperaReceitaPorNome(nomeReceita:String):Receita?
     suspend fun recuperaReceitaId(receita: Receita):Receita?
     suspend fun criarReceita(receita: Receita):Boolean
-    suspend fun atualizarReceita(id :Int,receita :Receita):Receita
+    suspend fun atualizarReceita(receita :Receita):Boolean
     suspend fun deletarReceita(receita: Receita):Boolean
     suspend fun  perquisarReceita(pequisa:String):List<Receita>
 }

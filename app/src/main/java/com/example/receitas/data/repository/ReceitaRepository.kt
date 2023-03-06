@@ -100,14 +100,15 @@ class  ReceitaRepository @Inject constructor(
         return   service.post(receitaData)
     }
 
-    override  suspend fun atualizarReceita(id: Int, receita: Receita): Receita {
-          val receitaAtualizado = service.putch(id, MapReceita.rceitaToReceitaData(receita))
-           return MapReceita.receitaDataToReceita(receitaAtualizado)
+    override  suspend fun atualizarReceita( receita: Receita): Boolean {
+          val receitaData = MapReceita.rceitaToReceitaData(receita)
+          val receitaAtualizado = service.putch( receitaData)
+          return receitaAtualizado
      }
 
     override suspend fun deletarReceita(receita: Receita) :Boolean {
         val  receitaData = MapReceita.rceitaToReceitaData(receita)
-          return service.delete(receitaData._idRealme)
+        return service.delete(receitaData._idRealme)
     }
 
 }

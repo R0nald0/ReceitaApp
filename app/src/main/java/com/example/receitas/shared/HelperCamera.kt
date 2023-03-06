@@ -5,6 +5,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
+import android.provider.ContactsContract.Data
 import androidx.activity.result.ActivityResult
 import androidx.core.content.FileProvider
 import androidx.viewbinding.BuildConfig
@@ -16,6 +17,7 @@ import java.util.Calendar
 import java.util.Date
 
 object  HelperCamera {
+     val data =Date()
 
     fun adicionarFotoPorCamera(resultActivity: ActivityResult, context: Context) : Uri? {
 
@@ -23,7 +25,7 @@ object  HelperCamera {
             val bitmap = resultActivity.data?.extras?.get("data") as Bitmap
             val caminho = File(context.cacheDir, "images")
             caminho.mkdirs()
-            val file = File(caminho,"receita.png")
+            val file = File(caminho,"${data.time}receita.png")
             val output = FileOutputStream(file)
 
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)

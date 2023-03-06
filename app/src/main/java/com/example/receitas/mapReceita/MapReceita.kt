@@ -65,6 +65,10 @@ object MapReceita {
         ingredientes =receitaView.ingredientes
     )
 
+    fun receitaViewToCreate(receitaView: ReceitaView)=ReceitaViewCreate(
+        receitaView.titulo,receitaView.Imagem,receitaView.tempo,receitaView.instrucao,receitaView.ingredientes
+    )
+
     fun receitaViewCreateToReceita(receitaViewCreate: ReceitaViewCreate)= Receita(
         idRealm = ObjectId(),
         id =0,
@@ -76,6 +80,7 @@ object MapReceita {
         ingredientes =receitaViewCreate.ingredientes
 
     )
+
 
     fun receitaToReceitaView(receita: Receita)=ReceitaView (
         idRealm = receita.idRealm?.toHexString(),
