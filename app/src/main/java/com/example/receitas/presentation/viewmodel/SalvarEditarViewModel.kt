@@ -24,10 +24,10 @@ class SalvarEditarViewModel @Inject constructor(
     get() = _resultadoOperacaoDbLiveData
 
     fun criarReceita(receitaViewCreate : ReceitaViewCreate){
-
-        Const.exibilog("receita name ${receitaViewCreate.titulo}")
+           val receita =MapReceita.receitaViewCreateToReceita(receitaViewCreate)
         viewModelScope.launch {
-            val resultado = useCaseReceita.criarReceita(receitaViewCreate)
+
+            val resultado = useCaseReceita.criarReceita(receita)
             _resultadoOperacaoDbLiveData.postValue(resultado)
         }
 

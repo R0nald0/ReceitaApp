@@ -51,6 +51,10 @@ class  ReceitaRepository @Inject constructor(
     }
     override suspend fun recuperarListaReceitas(): List<Receita> {
           val listaReceitaApi = service.getAll()
+        listaReceitaApi.forEach {
+             Const.exibilog("receita nome ${it.nome}")
+             Const.exibilog("receita img ${it.imageLink}")
+        }
 
         if (listaReceitaApi !=null){
 

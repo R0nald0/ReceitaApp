@@ -17,8 +17,10 @@ import com.example.receitas.R
 import com.example.receitas.databinding.ActivityDetalhesBinding
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.DetalhesViewModel
+import com.example.receitas.presentation.viewmodel.SalvarEditarViewModel
 import com.example.receitas.shared.constant.Const
 import com.example.receitas.shared.extension.showToast
+import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,6 +30,8 @@ class DetalhesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetalhesBinding
     private val viewModel :DetalhesViewModel by viewModels()
+    private val createViewModel :SalvarEditarViewModel by viewModels()
+    private lateinit var  receitaView : ReceitaView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetalhesBinding.inflate(layoutInflater)
@@ -53,7 +57,6 @@ class DetalhesActivity : AppCompatActivity() {
                 TODO("VERSION.SDK_INT < M")
             }
 
-
             btnPlay.setOnClickListener {
                 //TODO iniciar video
             }
@@ -61,8 +64,12 @@ class DetalhesActivity : AppCompatActivity() {
                 editarReceita()
             }
             imgBtnDeletar.setOnClickListener {
-                 val receitaAtaul = getIntentExtraReceita()
+                 val receitaAtaul = getIntentExtraReceitaName()
               showDialog(receitaAtaul)
+            }
+
+            imgBtnAddUserList.setOnClickListener {
+                viewModel.addReceitaToUserList(receitaView)
             }
 
         }
@@ -70,21 +77,29 @@ class DetalhesActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        viewModel.getReceitaByName(getIntentExtraReceita())
+        viewModel.getReceitaByName(getIntentExtraReceitaName())
     }
     fun editarReceita(){
-        val  receita = getIntentExtraReceita()
+        val  receita = getIntentExtraReceitaName()
         val intent =Intent(this,SalvarEditarActivity::class.java)
-        intent.putExtra(Const.TEXT_INTENT_EXTRAS_EDIT_RECEITA,receita)
+        intent.putExtra(Const.TEXT_INTENT_EXTRAS_RECEITA,receita)
         startActivity(intent)
     }
 
     fun initObserver(){
      viewModel.receitaView?.observe(this){
          if (it != null){
-             getViewReceita(it)
+             receitaView =it
+             getViewReceita()
          }
      }
+        viewModel.resultOperacaoLiveDataAddReceita.observe(this){
+          if (it.sucesso) showsnackBar(
+              this@DetalhesActivity.binding.imgBtnAddUserList ,
+              "Receita adicionada a sua lista"
+          )
+           else showToast(it.mensagem)
+        }
      viewModel.cerregandoLiveData.observe(this){
          // TODO  progressBar
      }
@@ -97,16 +112,18 @@ class DetalhesActivity : AppCompatActivity() {
             }
         }
  }
-    fun getIntentExtraReceita():ReceitaView{
+    fun getIntentExtraReceitaName():ReceitaView{
         val extra = intent.extras
         val receita  = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            extra?.getParcelable(Const.TEXT_INTENT_EXTRAS_CRIATE_RECEITA,ReceitaView::class.java)
+            extra?.getParcelable(Const.TEXT_INTENT_EXTRAS_RECEITA,ReceitaView::class.java)
         } else {
-            extra?.getParcelable<ReceitaView>(Const.TEXT_INTENT_EXTRAS_CRIATE_RECEITA) as ReceitaView
+            extra?.getParcelable<ReceitaView>(Const.TEXT_INTENT_EXTRAS_RECEITA) as ReceitaView
         }
+
         if (receita != null)return receita
          else{
              finish()
+            showToast("erro ao carregar dados")
             throw  Exception("erro ao carregar dados")
          }
 
@@ -124,24 +141,29 @@ class DetalhesActivity : AppCompatActivity() {
             }.create().show()
 
     }
-    fun  getViewReceita(receitaView: ReceitaView) {
+   private  fun getViewReceita() {
         with(binding) {
-            if(receitaView.ImageUrl.isEmpty() && receitaView.Imagem == "null"){
-                Picasso.get().load(R.drawable.demos).into(idImgReceitaDetalhes)
-            }else if (receitaView.ImageUrl.isEmpty()){
-                Picasso.get().load(Uri.parse(receitaView.Imagem)).into(idImgReceitaDetalhes)
+            Const.exibilog("user List detalhes  : ${receitaView.isUserList}")
+             if (receitaView.isUserList){
+                imgBtnAddUserList.visibility = View.GONE
+
+               if (receitaView.ImageUrl.isEmpty())
+                     Picasso.get().load(Uri.parse(receitaView.Imagem)).placeholder(R.drawable.image_search_24).into(idImgReceitaDetalhes)
+                else
+                    Picasso.get().load(Uri.parse(receitaView.ImageUrl)).placeholder(R.drawable.image_search_24).into(idImgReceitaDetalhes)
             }
-            else Picasso.get().load(receitaView.ImageUrl).into(idImgReceitaDetalhes)
+            else {
+                imgBtnEditar.visibility = View.GONE
+                imgBtnDeletar.visibility =View.GONE
+                Picasso.get().load(receitaView.ImageUrl).into(idImgReceitaDetalhes)
+            }
 
             txvReceitaInstrcoes.text = receitaView.instrucao
             TxvTempoReceitaDetalhes.text = receitaView.tempo
             TxvTituloReceitaDetalhes.text = receitaView.titulo.uppercase()
             idTxvIngredientesReceitaDetalhes.text =receitaView.ingredientes
+
         }
-    }
-
-    fun addReceitaToUserlist(){
-
     }
 
     fun createMenu(){
@@ -161,5 +183,8 @@ class DetalhesActivity : AppCompatActivity() {
             }
 
         })
+    }
+    fun showsnackBar(view : View ,messsange:String){
+         Snackbar.make(view,messsange,Snackbar.LENGTH_LONG).show()
     }
 }

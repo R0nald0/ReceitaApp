@@ -12,7 +12,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class ReceitaView(
     var idRealm : String? ,
-    var id : Int,
+    var isUserList : Boolean,
     var titulo :String,
     var Imagem : String,
     var ImageUrl : String,
@@ -23,6 +23,7 @@ data class ReceitaView(
 
 data class ReceitaViewCreate(
     var titulo :String,
+    var isUserList: Boolean = true,
     var Imagem : String,
     var tempo :String,
     var instrucao :String,

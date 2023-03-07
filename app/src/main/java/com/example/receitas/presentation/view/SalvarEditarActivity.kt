@@ -77,7 +77,7 @@ class SalvarEditarActivity : AppCompatActivity() {
                 val ingredientes =binding.edtIngredientesReceita.text.toString()
                 val tempo = binding.edtTempoPreparo.text.toString()
 
-                val receitaCreate =ReceitaViewCreate(tituloReceita,image.toString(),tempo,descricao, ingredientes)
+                val receitaCreate =ReceitaViewCreate(tituloReceita,true,image.toString(),tempo,descricao, ingredientes)
                 mainViewModel.criarReceita(receitaCreate)
             }
         }
@@ -185,10 +185,10 @@ class SalvarEditarActivity : AppCompatActivity() {
       return if (bundle !=null){
             binding.btnSalvar.text ="Editar"
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    val receitaView = bundle.getParcelable(Const.TEXT_INTENT_EXTRAS_EDIT_RECEITA,ReceitaView::class.java)
+                    val receitaView = bundle.getParcelable(Const.TEXT_INTENT_EXTRAS_RECEITA,ReceitaView::class.java)
                     return receitaView
                  } else {
-                    val receitaView =  bundle.getParcelable<ReceitaView>(Const.TEXT_INTENT_EXTRAS_EDIT_RECEITA) as ReceitaView
+                    val receitaView =  bundle.getParcelable<ReceitaView>(Const.TEXT_INTENT_EXTRAS_RECEITA) as ReceitaView
                    return receitaView
                 }
         }else{
@@ -205,8 +205,17 @@ class SalvarEditarActivity : AppCompatActivity() {
             binding.edtIngredientesReceita.setText( receitaView.ingredientes)
             binding.edtIntreucoesReceita.setText( receitaView.instrucao)
             binding.edtTempoPreparo.setText( receitaView.tempo)
-            if (receitaView.Imagem == "null")
-                 else{Picasso.get().load(receitaView.Imagem).into(binding.imgReceitaCadastro)}
+            if (receitaView.ImageUrl.isEmpty())
+                Picasso.get()
+                    .load(Uri.parse(receitaView.Imagem))
+                    .placeholder(R.drawable.image_search_24)
+                    .into(binding.imgReceitaCadastro)
+            else
+                Picasso.get()
+                    .load(Uri.parse(receitaView.ImageUrl))
+                    .placeholder(R.drawable.image_search_24)
+                    .into(binding.imgReceitaCadastro)
+
 
         }
     }

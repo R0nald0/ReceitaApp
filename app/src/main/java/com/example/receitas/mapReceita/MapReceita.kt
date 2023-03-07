@@ -13,6 +13,7 @@ object MapReceita {
 
     fun convertMealListItemToReceitaData(mealItem: MealItem) :ReceitaData{
          return  ReceitaData().apply {
+             this.isUserList= false
              this.nome = mealItem.strMeal
              this.imageLink =mealItem.strMealThumb
              this.instrucao = "${mealItem.strInstructions}"
@@ -34,18 +35,19 @@ object MapReceita {
     fun rceitaToReceitaData(receita: Receita):ReceitaData{
          return ReceitaData().apply {
              this._idRealme = receita.idRealm!!
-             this.idReceita = receita.id
+             this.isUserList = receita.isUserList
              this.nome = receita.titulo
              this.time = receita.tempo
              this.instrucao = receita.instrucoes
              this.image =receita.Imagem
+             this.imageLink = receita.ImagemUrl
              this.ingrediente = receita.ingredientes
          }
     }
 
     fun receitaDataToReceita(receitaData: ReceitaData)=Receita (
         idRealm = receitaData._idRealme,
-        id = receitaData.idReceita,
+        isUserList = receitaData.isUserList,
         titulo = receitaData.nome,
         Imagem = receitaData.image,
         ImagemUrl= receitaData.imageLink,
@@ -56,7 +58,7 @@ object MapReceita {
 
     fun receitaViewToReceita(receitaView: ReceitaView)= Receita(
         idRealm = ObjectId.invoke("${receitaView.idRealm}"),
-        id =receitaView.id,
+        isUserList  =receitaView.isUserList,
         titulo =receitaView.titulo,
         Imagem =receitaView.Imagem,
         ImagemUrl= receitaView.ImageUrl,
@@ -66,12 +68,17 @@ object MapReceita {
     )
 
     fun receitaViewToCreate(receitaView: ReceitaView)=ReceitaViewCreate(
-        receitaView.titulo,receitaView.Imagem,receitaView.tempo,receitaView.instrucao,receitaView.ingredientes
+        receitaView.titulo,
+        receitaView.isUserList,
+        receitaView.Imagem,
+        receitaView.tempo,
+        receitaView.instrucao,
+        receitaView.ingredientes
     )
 
     fun receitaViewCreateToReceita(receitaViewCreate: ReceitaViewCreate)= Receita(
         idRealm = ObjectId(),
-        id =0,
+        isUserList  =receitaViewCreate.isUserList,
         titulo =receitaViewCreate.titulo,
         Imagem =receitaViewCreate.Imagem,
         ImagemUrl="",
@@ -84,7 +91,7 @@ object MapReceita {
 
     fun receitaToReceitaView(receita: Receita)=ReceitaView (
         idRealm = receita.idRealm?.toHexString(),
-        id =receita.id,
+        isUserList  =receita.isUserList,
         titulo =receita.titulo,
         Imagem = receita.Imagem,
         ImageUrl =receita.ImagemUrl,

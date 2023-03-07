@@ -9,7 +9,7 @@ import org.mongodb.kbson.ObjectId
 class ReceitaData :RealmObject {
      @PrimaryKey
      var _idRealme : ObjectId = ObjectId()
-     var idReceita: Int = 0
+     var isUserList : Boolean = true
      var nome :String =""
      var image : String =""
      var imageLink :String =""

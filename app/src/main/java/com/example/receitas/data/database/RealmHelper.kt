@@ -31,12 +31,15 @@ class RealmHelper :IServiceReceita{
 
     override suspend fun post(receita: ReceitaData): Boolean {
 
+
+
          try {
             realmDb.write{
                 this.copyToRealm(
                     ReceitaData().apply {
                         this.time = receita.time
                         this.image =receita.image
+                        this.isUserList = receita.isUserList
                         this.imageLink =receita.imageLink
                         this.ingrediente = receita.ingrediente
                         this.instrucao =receita.instrucao

@@ -8,13 +8,14 @@ import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.model.ReceitaViewCreate
 
 interface IReceitaUseCase {
+    suspend fun addReceitaToUserList(receitaView: ReceitaView):ResultadoOperacaoDb
     suspend   fun listarReceita():ResultConsultasReceita
     suspend   fun recuperarReceitasPorArea(areaName:String):List<Receita>
     suspend   fun pesquisarReceitaPorTitulo(tituloPesquisa:String):ResultConsultasReceita
     suspend   fun listarArea():ResultConsultasAreas
-    suspend fun getReceitaByName(receita:Receita):ReceitaView
+    suspend fun getReceitaByName(receitaName:String):ReceitaView
     suspend fun getReceitaById(receita:Receita):ReceitaView
-    suspend fun criarReceita(receitaCreate: ReceitaViewCreate):ResultadoOperacaoDb
+    suspend fun criarReceita(receita: Receita):ResultadoOperacaoDb
     suspend fun atualizarReceita(receitaView:ReceitaView):ResultadoOperacaoDb
     suspend fun deletarReceita(receitaView: Receita):ResultadoOperacaoDb
 

@@ -57,16 +57,17 @@
                 android:layout_marginTop="18dp"
                 android:layout_marginEnd="8dp"
                 android:orientation="horizontal"
+                android:padding="5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <TextView
                     android:id="@+id/TxvTituloReceitaDetalhes"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:layout_weight="28"
+                    android:layout_weight="20"
                     android:text="Titulo"
                     android:textSize="24sp"
                     android:textStyle="bold|italic" />
@@ -78,7 +79,9 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:backgroundTint="@color/vermelhoTrasnparent"
-                    app:srcCompat="@drawable/ic_edit_24" />
+                    android:visibility="visible"
+                    app:srcCompat="@drawable/ic_edit_24"
+                    tools:visibility="gone" />
 
                 <ImageButton
                     android:id="@+id/img_btn_deletar"
@@ -87,7 +90,17 @@
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:backgroundTint="@color/vermelhoTrasnparent"
-                    app:srcCompat="@drawable/delete_24" />
+                    app:srcCompat="@drawable/delete_24"
+                    tools:visibility="gone" />
+
+                <ImageButton
+                    android:id="@+id/img_btn_add_user_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/bg_image_button"
+                    app:srcCompat="@drawable/add_24" />
             </LinearLayout>
 
             <ImageView
