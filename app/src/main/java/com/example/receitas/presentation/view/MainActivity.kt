@@ -29,11 +29,12 @@ import com.example.receitas.presentation.viewmodel.MainViewModel
 import com.example.receitas.shared.extension.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import org.imaginativeworld.whynotimagecarousel.model.CarouselItem
 
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    lateinit var rcView: RecyclerView
+
      private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
     }
@@ -42,9 +43,7 @@ class MainActivity : AppCompatActivity() {
     private var areaAdapter : AreaListAdapter? = null
     private var userReceitasAdapter : UserReceitasAdapter? = null
     private var searchListAdapter : SearchListAdapter? = null
-
-
-    private var linearLayoutManager :LinearLayoutManager? =  null
+    private var areaName :String? = null
 
     private val mainViewModel by viewModels<MainViewModel>()
 
@@ -55,24 +54,24 @@ class MainActivity : AppCompatActivity() {
         initAdpaters()
         initObservers()
         initListeners()
-
     }
 
     override fun onStart() {
         super.onStart()
         mainViewModel.listar()
         mainViewModel.listarAreas()
-        mainViewModel.recuperarArea("Unknown")
+        mainViewModel.recuperarArea(areaAdapter?.areaName)
+        mainViewModel.getListReceitaBanner()
     }
 
     fun initAdpaters(){
 
-        adapter = ReceitaAdapter{receitaView->
+        adapter = ReceitaAdapter{receitaView-> }
 
+        areaAdapter = AreaListAdapter{nameArea ->
+            mainViewModel.recuperarArea(nameArea)
         }
-        areaAdapter = AreaListAdapter{
-            mainViewModel.recuperarArea(it)
-        }
+
         userReceitasAdapter = UserReceitasAdapter {
 
         }
@@ -81,6 +80,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun initObservers(){
+        mainViewModel.areaRsultadoConsulta.observe(this){
+            if (it.sucesso){
+                areaAdapter?.addList(it.list as MutableList<Area>)
+            }else{
+                showToast(it.mensagem)
+            }
+        }
+        mainViewModel.areaNameObserve.observe(this){areaNameObserve ->
+              if (areaNameObserve.isNotEmpty()){
+                  areaName = areaNameObserve
+              }
+
+        }
+
         mainViewModel.listaReceitaLiveData.observe(this){
             if (it !=null ){
                 adapter!!.adicionarLista( it as MutableList<ReceitaView>)
@@ -105,19 +118,26 @@ class MainActivity : AppCompatActivity() {
              }
         }
 
-        mainViewModel.areaRsultadoConsulta.observe(this){
-            if (it.sucesso){
-                areaAdapter?.addList(it.list as MutableList<Area>)
-            }else{
-             showToast(it.mensagem)
-            }
-        }
+
         mainViewModel.pesquisaLiveData.observe(this){
              if (it.sucesso){
                  searchListAdapter?.carregarItemList(it.list)
                  applicationContext.showToast(it.mensagem)
              }else{
                  applicationContext.showToast(it.mensagem)
+             }
+        }
+        mainViewModel.receitaBannerResultListLiveData.observe(this){resultListReceitaBanner->
+             if (resultListReceitaBanner.sucesso){
+                 val listImage = resultListReceitaBanner.list.map {receitaView ->
+                     CarouselItem(
+                         imageDrawable =receitaView.Imagem.toInt(),
+                          caption = "${receitaView.titulo}  ${receitaView.tempo}"
+                         )
+                 }
+                 binding.imgSlideCarousel.setData(listImage)
+             }else{
+                 showToast("Erro ao carrega")
              }
         }
 
@@ -128,6 +148,7 @@ class MainActivity : AppCompatActivity() {
         with(binding){
             idRcView.adapter = adapter
             idRcView.layoutManager =LinearLayoutManager(applicationContext,LinearLayoutManager.HORIZONTAL,false)
+
 
             rcvArea.adapter= areaAdapter
             rcvArea.layoutManager=LinearLayoutManager(applicationContext,LinearLayoutManager.HORIZONTAL,false)
@@ -162,13 +183,14 @@ class MainActivity : AppCompatActivity() {
                      }else{
                          binding.rcvSearchReceitas.visibility =View.GONE
                      }
-
                  }
 
                return true
             }
 
         } )
+
+
 
         }
     }

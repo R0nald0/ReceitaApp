@@ -2,19 +2,20 @@ package com.example.receitas.data.repository
 
 import com.example.receitas.shared.constant.Const
 import com.example.receitas.data.model.Dto.Area
-import com.example.receitas.data.model.Dto.MealItem
-import com.example.receitas.data.model.ReceitaData
 
 import com.example.receitas.data.repository.interf.IRepository
-import com.example.receitas.data.service.ReceitaServiceApi
-import com.example.receitas.data.service.interf.IServiceReceita
+import com.example.receitas.data.service.ReceitaBannerService
+import com.example.receitas.data.service.interf.IServiceApi
+import com.example.receitas.data.service.interf.IServiceReceitaDb
 import com.example.receitas.domain.model.Receita
 import com.example.receitas.mapReceita.MapReceita
 import javax.inject.Inject
 
+
 class  ReceitaRepository @Inject constructor(
-      private val service :IServiceReceita,
-      private val serviceApi :ReceitaServiceApi
+    private val service :IServiceReceitaDb,
+    private val serviceApi :IServiceApi,
+    private val receitaBannerService: ReceitaBannerService
     ) :IRepository{
 
     override suspend fun perquisarReceita(pequisa: String): List<Receita> {
@@ -25,7 +26,6 @@ class  ReceitaRepository @Inject constructor(
               }
             return  listReceita
         }
-
         return listOf()
     }
 
@@ -113,6 +113,19 @@ class  ReceitaRepository @Inject constructor(
     override suspend fun deletarReceita(receita: Receita) :Boolean {
         val  receitaData = MapReceita.rceitaToReceitaData(receita)
         return service.delete(receitaData._idRealme)
+    }
+
+    override fun getListBanner(): List<Receita> {
+         val listaBannerReceita = receitaBannerService.getReceitasBannerList()
+          if (listaBannerReceita.isNotEmpty()){
+                   val receitasBanners =listaBannerReceita.map {receitaData->
+                        MapReceita.receitaDataToReceita(receitaData)
+                   }
+              return receitasBanners
+          }else{
+              return  listOf()
+          }
+
     }
 
 }

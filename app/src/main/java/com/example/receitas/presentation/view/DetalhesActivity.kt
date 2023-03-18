@@ -10,14 +10,12 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.MenuProvider
 import com.example.receitas.R
 import com.example.receitas.databinding.ActivityDetalhesBinding
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.DetalhesViewModel
-import com.example.receitas.presentation.viewmodel.SalvarEditarViewModel
 import com.example.receitas.shared.constant.Const
 import com.example.receitas.shared.extension.showToast
 import com.google.android.material.snackbar.Snackbar
@@ -30,7 +28,6 @@ class DetalhesActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityDetalhesBinding
     private val viewModel :DetalhesViewModel by viewModels()
-    private val createViewModel :SalvarEditarViewModel by viewModels()
     private lateinit var  receitaView : ReceitaView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +37,7 @@ class DetalhesActivity : AppCompatActivity() {
 
         initObserver()
         initBinds()
+        createMenu()
 
     }
 
@@ -61,7 +59,7 @@ class DetalhesActivity : AppCompatActivity() {
                 //TODO iniciar video
             }
             imgBtnEditar.setOnClickListener {
-                editarReceita()
+                goToSalvarEditarReceita()
             }
             imgBtnDeletar.setOnClickListener {
                  val receitaAtaul = getIntentExtraReceitaName()
@@ -79,8 +77,8 @@ class DetalhesActivity : AppCompatActivity() {
         super.onStart()
         viewModel.getReceitaByName(getIntentExtraReceitaName())
     }
-    fun editarReceita(){
-        val  receita = getIntentExtraReceitaName()
+    fun goToSalvarEditarReceita(){
+        val  receita = receitaView
         val intent =Intent(this,SalvarEditarActivity::class.java)
         intent.putExtra(Const.TEXT_INTENT_EXTRAS_RECEITA,receita)
         startActivity(intent)
@@ -143,14 +141,20 @@ class DetalhesActivity : AppCompatActivity() {
     }
    private  fun getViewReceita() {
         with(binding) {
-            Const.exibilog("user List detalhes  : ${receitaView.isUserList}")
+
              if (receitaView.isUserList){
                 imgBtnAddUserList.visibility = View.GONE
 
                if (receitaView.ImageUrl.isEmpty())
-                     Picasso.get().load(Uri.parse(receitaView.Imagem)).placeholder(R.drawable.image_search_24).into(idImgReceitaDetalhes)
-                else
-                    Picasso.get().load(Uri.parse(receitaView.ImageUrl)).placeholder(R.drawable.image_search_24).into(idImgReceitaDetalhes)
+                     Picasso.get().load(Uri.parse(receitaView.Imagem))
+                         .placeholder(R.drawable.ic_image_24)
+                         .into(idImgReceitaDetalhes)
+                else{
+                   Picasso.get().load(Uri.parse(receitaView.ImageUrl))
+                       .placeholder(R.drawable.ic_image_24)
+                       .into(idImgReceitaDetalhes)
+                   }
+
             }
             else {
                 imgBtnEditar.visibility = View.GONE
@@ -174,8 +178,19 @@ class DetalhesActivity : AppCompatActivity() {
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                return when(menuItem.itemId) {
-                   R.id.add_receita -> {
-                       Toast.makeText(applicationContext, "add menu", Toast.LENGTH_LONG).show()
+                   R.id.share_receita -> {
+                       val shareIntent= Intent( Intent.ACTION_SEND)
+                        shareIntent.type = "image/png"
+                        shareIntent.putExtra(Intent.EXTRA_SUBJECT,receitaView.titulo)
+                        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                           "Instrucao : ${receitaView.instrucao}\n" +
+                                   "Ingredientes: ${receitaView.ingredientes}"
+
+                        )
+                        shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.parse(receitaView.Imagem))
+                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+
+                       startActivity(Intent.createChooser(shareIntent,"Item receita"))
                        true
                    }
                   else -> false

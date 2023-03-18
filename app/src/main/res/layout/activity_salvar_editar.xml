@@ -17,12 +17,12 @@ android:fillViewport="true">
         android:padding="8dp">
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/txv_titulo_ui_receita"
             android:layout_width="370dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="16dp"
             android:gravity="center"
             android:text="Cadastrar Receita"
@@ -42,7 +42,7 @@ android:fillViewport="true">
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView">
+            app:layout_constraintTop_toBottomOf="@+id/txv_titulo_ui_receita">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edt_nome_receita"
@@ -79,8 +79,8 @@ android:fillViewport="true">
 
             <ImageView
                 android:id="@+id/img_receita_cadastro"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
                 android:layout_gravity="center"
                 android:layout_margin="8dp"
                 android:layout_weight="0"
@@ -103,7 +103,14 @@ android:fillViewport="true">
                 android:id="@+id/edt_ingredientes_receita"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:hint="Ingredientes" />
+                android:hint="Ingredientes"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:isScrollContainer="true"
+                android:singleLine="false"
+                android:scrollbars="vertical"
+                android:foregroundGravity="center"
+               />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -118,6 +125,11 @@ android:fillViewport="true">
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="top"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:isScrollContainer="true"
+                android:singleLine="false"
+                android:scrollbars="vertical"
                 android:foregroundGravity="center"
                 android:gravity="top|left"
                 android:hint="Instruções" />

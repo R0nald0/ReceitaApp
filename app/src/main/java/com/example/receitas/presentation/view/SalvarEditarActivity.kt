@@ -37,10 +37,11 @@ class SalvarEditarActivity : AppCompatActivity() {
     private  var image :Uri? = null
 
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
+        supportActionBar?.title =""
 
 
         virificaResultContracts()
@@ -48,26 +49,21 @@ class SalvarEditarActivity : AppCompatActivity() {
         initListeners()
 
 
-       /* binding.btnImgReceita.setOnClickListener {
-            exibirDialog()
-        }*/
+
         binding.imgReceitaCadastro.setOnClickListener {
             exibirDialog()
         }
 
         binding.btnSalvar.setOnClickListener {
+
             val receitaView = getIntentExtra()
             if (receitaView !=null){
-
-                val tituloReceita =binding.edtNomeReceita.text.toString()
-                val instrucoes =binding.edtIntreucoesReceita.text.toString()
-                val ingredientes =binding.edtIngredientesReceita.text.toString()
                 val tempo = binding.edtTempoPreparo.text.toString()
 
-                receitaView.tempo=tempo
-                receitaView.instrucao= instrucoes
-                receitaView.titulo=tituloReceita
-                receitaView.ingredientes =ingredientes
+                receitaView.tempo= tempo
+                receitaView.instrucao= binding.edtIntreucoesReceita.text.toString()
+                receitaView.titulo=binding.edtNomeReceita.text.toString()
+                receitaView.ingredientes =binding.edtIngredientesReceita.text.toString()
                 receitaView.Imagem = image.toString()
 
                 mainViewModel.editareceita(receitaView)
@@ -78,7 +74,7 @@ class SalvarEditarActivity : AppCompatActivity() {
                 val tempo = binding.edtTempoPreparo.text.toString()
 
                 val receitaCreate =ReceitaViewCreate(tituloReceita,true,image.toString(),tempo,descricao, ingredientes)
-                mainViewModel.criarReceita(receitaCreate)
+                mainViewModel.verificarCampos(receitaCreate)
             }
         }
 
@@ -133,20 +129,23 @@ class SalvarEditarActivity : AppCompatActivity() {
                 showToast(it.mensagem)
             }
         }
+        mainViewModel.verifiacaCampoLiveData.observe(this){
+             it.sucesso
+            if (it.sucesso){
+                mainViewModel.criarReceita(it.receitaView)
+                showToast("campo preenchidos")
+            }else{
+                showToast("preencha os campo")
+                erroMessenge()
+            }
+        }
+        mainViewModel.isCreateReceita.observe(this){
+            //TODO CRIAR LOADING PARA SALVAR OU EDITAR
+        }
     }
 
     private fun initObservables() {
         with(binding){
-            if (edtNomeReceita.text.toString().isEmpty()) edtNomeReceita.error = "Digite o nome da receita"
-              else null
-            if (edtTempoPreparo.text.toString().isEmpty()) edtTempoPreparo.error = "insira o tempo de preparo"
-             else  null
-
-            if (edtIntreucoesReceita.text.toString().isEmpty()) edtIntreucoesReceita.error = "insira as intrucões receita"
-             else null
-
-            if (edtIngredientesReceita.text.toString().isEmpty()) edtIngredientesReceita.error = "insira os ingrediente da receitas"
-            else null
 
         }
     }
@@ -184,6 +183,8 @@ class SalvarEditarActivity : AppCompatActivity() {
         val bundle = intent.extras
       return if (bundle !=null){
             binding.btnSalvar.text ="Editar"
+          binding.txvTituloUiReceita.text= "Editar Receita"
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     val receitaView = bundle.getParcelable(Const.TEXT_INTENT_EXTRAS_RECEITA,ReceitaView::class.java)
                     return receitaView
@@ -192,6 +193,7 @@ class SalvarEditarActivity : AppCompatActivity() {
                    return receitaView
                 }
         }else{
+           binding.txvTituloUiReceita.text = "Cadastrar Receita"
             binding.btnSalvar.text ="Criar"
             return null
         }
@@ -216,7 +218,21 @@ class SalvarEditarActivity : AppCompatActivity() {
                     .placeholder(R.drawable.image_search_24)
                     .into(binding.imgReceitaCadastro)
 
+        }
+    }
 
+    fun erroMessenge(){
+        with(binding){
+            if (edtNomeReceita.text.toString().isEmpty()) edtNomeReceita.error = "Digite o nome da receita"
+            else null
+            if (edtTempoPreparo.text.toString().isEmpty()) edtTempoPreparo.error = "insira o tempo de preparo"
+            else  null
+
+            if (edtIntreucoesReceita.text.toString().isEmpty()) edtIntreucoesReceita.error = "insira as intrucões receita"
+            else null
+
+            if (edtIngredientesReceita.text.toString().isEmpty()) edtIngredientesReceita.error = "insira os ingrediente da receitas"
+            else null
         }
     }
 }

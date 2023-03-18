@@ -25,10 +25,14 @@ class SearchListAdapter :Adapter<SearchListAdapter.SearchViewHolder>() {
             binding = itemLayout
         }
         fun bind(receitaView :ReceitaView){
-             if(receitaView.Imagem =="null"){
-                 Picasso.get().load(R.drawable.demos).into(binding.imgSearchReceita)
+             if(receitaView.ImageUrl.isNotEmpty()){
+                 Picasso.get().load(receitaView.ImageUrl)
+                     .placeholder(R.drawable.ic_image_24)
+                     .into(binding.imgSearchReceita)
              }else{
-                 Picasso.get().load(receitaView.Imagem).into(binding.imgSearchReceita)
+                 Picasso.get().load(receitaView.Imagem)
+                     .placeholder(R.drawable.ic_image_24)
+                     .into(binding.imgSearchReceita)
              }
             binding.txvTituloSearchReceita.text = receitaView.titulo
             itemView.setOnClickListener {

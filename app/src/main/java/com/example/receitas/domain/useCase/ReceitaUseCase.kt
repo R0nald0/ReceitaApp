@@ -1,6 +1,5 @@
 package com.example.receitas.domain.useCase
 
-import android.util.Log
 import com.example.receitas.data.repository.interf.IRepository
 import com.example.receitas.domain.model.Receita
 import com.example.receitas.domain.interf.IReceitaUseCase
@@ -8,6 +7,7 @@ import com.example.receitas.domain.interf.IReceitaUseCase
 import com.example.receitas.domain.results.ResultConsultasAreas
 import com.example.receitas.domain.results.ResultConsultasReceita
 import com.example.receitas.domain.results.ResultadoOperacaoDb
+import com.example.receitas.domain.results.VerificaCampos
 import com.example.receitas.mapReceita.MapReceita
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.model.ReceitaViewCreate
@@ -143,11 +143,33 @@ class ReceitaUseCase @Inject constructor(
       return  ResultConsultasReceita(false,"erro ${ ex.message}", listOf())
     }}
 
+    override fun verificarCampos(receitaView: ReceitaViewCreate): VerificaCampos {
+         val verificaCampos =VerificaCampos(receitaView)
+        return verificaCampos
+    }
+
+
     override suspend fun addReceitaToUserList(receitaView: ReceitaView): ResultadoOperacaoDb {
 
              val receita =MapReceita.receitaViewToReceita(receitaView).copy(isUserList = true)
            Const.exibilog("user List  : ${receita.isUserList}")
              val resultadoOperacaoDb =criarReceita(receita)
                 return  resultadoOperacaoDb
+    }
+
+    override suspend fun getListBanner(): ResultConsultasReceita {
+           try {
+               val receitaBanner =repository.getListBanner()
+                val receitaViewBannerList =  MapReceita.toListReceitaView(receitaBanner)
+               return ResultConsultasReceita(
+                   true,"lista banner", receitaViewBannerList
+               )
+
+           }catch (ex:Exception){
+               ex.stackTrace
+               return ResultConsultasReceita(
+                   false,"erro ao carregar lista", listOf()
+               )
+           }
     }
 }

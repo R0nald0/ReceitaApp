@@ -15,4 +15,6 @@ interface IRepository {
     suspend fun atualizarReceita(receita :Receita):Boolean
     suspend fun deletarReceita(receita: Receita):Boolean
     suspend fun  perquisarReceita(pequisa:String):List<Receita>
+
+     fun getListBanner() :List<Receita>
 }
