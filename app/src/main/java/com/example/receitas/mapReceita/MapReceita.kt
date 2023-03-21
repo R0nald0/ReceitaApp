@@ -39,7 +39,7 @@ object MapReceita {
              this.nome = receita.titulo
              this.time = receita.tempo
              this.instrucao = receita.instrucoes
-             this.image =receita.Imagem
+             this.image =receita.Imagem.toString()
              this.imageLink = receita.ImagemUrl
              this.ingrediente = receita.ingredientes
          }
@@ -49,7 +49,7 @@ object MapReceita {
         idRealm = receitaData._idRealme,
         isUserList = receitaData.isUserList,
         titulo = receitaData.nome,
-        Imagem = receitaData.image,
+        Imagem  = Uri.parse(receitaData.image ),
         ImagemUrl= receitaData.imageLink,
         instrucoes= receitaData.instrucao,
         tempo = receitaData.time,

@@ -131,13 +131,13 @@ class MainActivity : AppCompatActivity() {
              if (resultListReceitaBanner.sucesso){
                  val listImage = resultListReceitaBanner.list.map {receitaView ->
                      CarouselItem(
-                         imageDrawable =receitaView.Imagem.toInt(),
+                         imageDrawable =receitaView.Imagem.toString().toInt(),
                           caption = "${receitaView.titulo}  ${receitaView.tempo}"
                          )
                  }
                  binding.imgSlideCarousel.setData(listImage)
              }else{
-                 showToast("Erro ao carrega")
+                 showToast("Erro ao carregar")
              }
         }
 

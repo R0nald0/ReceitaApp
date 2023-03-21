@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.provider.ContactsContract.Data
+import android.provider.MediaStore
 import androidx.activity.result.ActivityResult
 import androidx.core.content.FileProvider
 import androidx.viewbinding.BuildConfig
@@ -19,11 +20,12 @@ import java.util.Date
 object  HelperCamera {
      val data =Date()
 
-    fun adicionarFotoPorCamera(resultActivity: ActivityResult, context: Context) : Uri? {
+      fun adicionarFotoPorCamera(resultActivity: ActivityResult, context: Context) : Uri? {
 
         if(resultActivity.resultCode == Activity.RESULT_OK){
             val bitmap = resultActivity.data?.extras?.get("data") as Bitmap
             val caminho = File(context.cacheDir, "images")
+
             caminho.mkdirs()
             val file = File(caminho,"${data.time}receita.png")
             val output = FileOutputStream(file)
@@ -35,6 +37,29 @@ object  HelperCamera {
             Const.exibilog("hd ${Build.HARDWARE}")
             Const.exibilog("id ${Build.ID}")
             Const.exibilog("build ${BuildConfig.LIBRARY_PACKAGE_NAME}")
+           val uriImage = FileProvider.getUriForFile(context, "com.example.receitas.provider", file)
+
+            return uriImage
+
+        }else{
+            return null
+        }
+
+    }
+      fun salvarFotoGaleriaUri(uri: Uri, context: Context) : Uri? {
+
+        if(uri !=null){
+            val bitmap =  MediaStore.Images.Media.getBitmap(context.contentResolver,uri)
+            val caminho = File(context.cacheDir, "images")
+
+            caminho.mkdirs()
+            val file = File(caminho,"${data.time}Greceita.png")
+            val output = FileOutputStream(file)
+
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
+            output.flush()
+            output.close()
+
            val uriImage = FileProvider.getUriForFile(context, "com.example.receitas.provider", file)
 
             return uriImage

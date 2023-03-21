@@ -6,7 +6,6 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
-import android.view.WindowManager
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -18,6 +17,7 @@ import com.example.receitas.presentation.model.ReceitaViewCreate
 import com.example.receitas.presentation.viewmodel.SalvarEditarViewModel
 import com.example.receitas.shared.HelperCamera
 import com.example.receitas.shared.constant.Const
+import com.example.receitas.shared.extension.esconderTeclado
 import com.example.receitas.shared.extension.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.squareup.picasso.Picasso
@@ -43,14 +43,12 @@ class SalvarEditarActivity : AppCompatActivity() {
         setContentView(binding.root)
         supportActionBar?.title =""
 
-
         virificaResultContracts()
         initObservables()
         initListeners()
 
-
-
-        binding.imgReceitaCadastro.setOnClickListener {
+        binding.imgReceitaCadastro.setOnClickListener {view->
+            view.esconderTeclado()
             exibirDialog()
         }
 
@@ -64,20 +62,22 @@ class SalvarEditarActivity : AppCompatActivity() {
                 receitaView.instrucao= binding.edtIntreucoesReceita.text.toString()
                 receitaView.titulo=binding.edtNomeReceita.text.toString()
                 receitaView.ingredientes =binding.edtIngredientesReceita.text.toString()
-                receitaView.Imagem = image.toString()
+                if (image !=null) receitaView.Imagem = image
 
                 mainViewModel.editareceita(receitaView)
+
             }else{
                 val tituloReceita =binding.edtNomeReceita.text.toString()
                 val descricao =binding.edtIntreucoesReceita.text.toString()
                 val ingredientes =binding.edtIngredientesReceita.text.toString()
                 val tempo = binding.edtTempoPreparo.text.toString()
+                var imageReceita = Uri.EMPTY
+                    if (image != null) imageReceita = image
 
-                val receitaCreate =ReceitaViewCreate(tituloReceita,true,image.toString(),tempo,descricao, ingredientes)
+                val receitaCreate =ReceitaViewCreate(tituloReceita,true,imageReceita,tempo,descricao, ingredientes)
                 mainViewModel.verificarCampos(receitaCreate)
             }
         }
-
     }
 
     override fun onStart() {
@@ -109,15 +109,16 @@ class SalvarEditarActivity : AppCompatActivity() {
 
         resultaContract = registerForActivityResult(ActivityResultContracts.GetContent()){
             if (it !=null ){
-                image =it
-                applicationContext.showToast(it.toString())
+                image = HelperCamera.salvarFotoGaleriaUri(it,this)
                 Picasso.get().load(image).into(binding.imgReceitaCadastro)
+
+                Const.exibilog("imgaem galeria ${image}")
             }else{
+                Const.exibilog("imgaem galeria sem foto ${image}")
                 showToast("Nenhuma imagem selecionada")
             }
         }
     }
-
 
     private fun initListeners() {
         mainViewModel.resultadoOperacaoDb.observe(this){
@@ -133,10 +134,11 @@ class SalvarEditarActivity : AppCompatActivity() {
              it.sucesso
             if (it.sucesso){
                 mainViewModel.criarReceita(it.receitaView)
-                showToast("campo preenchidos")
+                showToast(getString(R.string.campo_preenchido))
+
             }else{
-                showToast("preencha os campo")
-                erroMessenge()
+                showToast(getString(R.string.preencha_camopo))
+                AlertMessengeFields()
             }
         }
         mainViewModel.isCreateReceita.observe(this){
@@ -151,12 +153,10 @@ class SalvarEditarActivity : AppCompatActivity() {
     }
 
     fun exibirDialog(){
-        val diolog = BottomSheetDialog(this, R.style.BottomSheetDialogg).apply {
-            this.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE)
-        }
+        val diolog = BottomSheetDialog(this, R.style.BottomSheetDialogg).apply {}
 
         val bottomSheetDiaolog : CadastrarReceitaLayoutBinding =
-            CadastrarReceitaLayoutBinding.inflate(layoutInflater,null,false)
+            CadastrarReceitaLayoutBinding.inflate(layoutInflater)
         diolog.setContentView(bottomSheetDiaolog.root)
         diolog.show()
 
@@ -174,11 +174,11 @@ class SalvarEditarActivity : AppCompatActivity() {
     private fun requistarPermissao(permissoa:String){
         permission.launch(permissoa)
     }
+
     private fun launchCamera (){
          val intent =Intent(MediaStore.ACTION_IMAGE_CAPTURE)
             acessCamera.launch(intent)
     }
-
     private fun getIntentExtra() : ReceitaView?{
         val bundle = intent.extras
       return if (bundle !=null){
@@ -199,7 +199,7 @@ class SalvarEditarActivity : AppCompatActivity() {
         }
 
     }
-    fun getDataReceitaToEditText(){
+    private fun getDataReceitaToEditText(){
           val receitaView =  getIntentExtra()
         if (receitaView != null){
 
@@ -207,31 +207,26 @@ class SalvarEditarActivity : AppCompatActivity() {
             binding.edtIngredientesReceita.setText( receitaView.ingredientes)
             binding.edtIntreucoesReceita.setText( receitaView.instrucao)
             binding.edtTempoPreparo.setText( receitaView.tempo)
-            if (receitaView.ImageUrl.isEmpty())
-                Picasso.get()
-                    .load(Uri.parse(receitaView.Imagem))
-                    .placeholder(R.drawable.image_search_24)
-                    .into(binding.imgReceitaCadastro)
-            else
-                Picasso.get()
-                    .load(Uri.parse(receitaView.ImageUrl))
-                    .placeholder(R.drawable.image_search_24)
-                    .into(binding.imgReceitaCadastro)
 
+            val image = receitaView.checkImg()
+            if (image != null)Picasso.get().load(Uri.parse(image)).into(binding.imgReceitaCadastro)
+            else Picasso.get().load(R.drawable.red_image_search_24).into(binding.imgReceitaCadastro)
         }
     }
 
-    fun erroMessenge(){
+    fun AlertMessengeFields(){
         with(binding){
-            if (edtNomeReceita.text.toString().isEmpty()) edtNomeReceita.error = "Digite o nome da receita"
+            if (edtNomeReceita.text.toString().isEmpty()) edtNomeReceita.error = getString(R.string.alerta_nome_receita)
             else null
-            if (edtTempoPreparo.text.toString().isEmpty()) edtTempoPreparo.error = "insira o tempo de preparo"
+            if (edtTempoPreparo.text.toString().isEmpty()) edtTempoPreparo.error = getString(R.string.alerta_tempo_preparo)
             else  null
 
-            if (edtIntreucoesReceita.text.toString().isEmpty()) edtIntreucoesReceita.error = "insira as intrucões receita"
+            if (edtIntreucoesReceita.text.toString().isEmpty()) edtIntreucoesReceita.error = getString(
+                            R.string.alerta_instrucao)
             else null
 
-            if (edtIngredientesReceita.text.toString().isEmpty()) edtIngredientesReceita.error = "insira os ingrediente da receitas"
+            if (edtIngredientesReceita.text.toString().isEmpty()) edtIngredientesReceita.error = getString(
+                            R.string.alerta_ingrediente_campo)
             else null
         }
     }

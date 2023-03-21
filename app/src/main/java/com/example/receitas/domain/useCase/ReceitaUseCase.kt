@@ -1,5 +1,7 @@
 package com.example.receitas.domain.useCase
 
+import android.net.Uri
+import com.example.receitas.R
 import com.example.receitas.data.repository.interf.IRepository
 import com.example.receitas.domain.model.Receita
 import com.example.receitas.domain.interf.IReceitaUseCase
@@ -34,6 +36,9 @@ class ReceitaUseCase @Inject constructor(
     override suspend fun listarReceita(): ResultConsultasReceita {
          try {
              val listReceita = repository.recuperarListaReceitas()
+             listReceita.forEach {
+
+             }
 
              val listaReceitaview = MapReceita.toListReceitaView(listReceita)
              return  ResultConsultasReceita(
@@ -66,7 +71,7 @@ class ReceitaUseCase @Inject constructor(
             if (receitaView !=null){
                 return  MapReceita.receitaToReceitaView(receitaView)
             }else{
-                return  ReceitaView("",false,"null","", "","", "","")
+                return  ReceitaView("",false,"null", Uri.EMPTY, "","", "","")
             }
 
         }catch (ex:Exception){
@@ -79,7 +84,7 @@ class ReceitaUseCase @Inject constructor(
              if (receitaViwe !=null){
                  return  MapReceita.receitaToReceitaView(receitaViwe)
              }
-            return    return  ReceitaView("",false,"null","", "","", "","")
+            return    return  ReceitaView("",false,"null", Uri.EMPTY, "","", "","")
 
         }catch (ex:Exception){
             throw Exception("Errro ao recuperar Receita :${ex.message}")
@@ -88,11 +93,10 @@ class ReceitaUseCase @Inject constructor(
     override suspend fun criarReceita(receita: Receita): ResultadoOperacaoDb {
         try {
 
-
             if ( receita.titulo.isEmpty())
                 return ResultadoOperacaoDb(false,"preenchos campos o nome")
 
-            if (receita.ingredientes.isNullOrEmpty())
+            if (receita.ingredientes.isEmpty())
                 return ResultadoOperacaoDb(false,"preencha os ingredientes")
             if (receita.tempo.isEmpty())
                 receita.tempo ="00"
@@ -101,7 +105,7 @@ class ReceitaUseCase @Inject constructor(
 
             val receitaCriada = repository.criarReceita(receita)
             return ResultadoOperacaoDb(
-                 receitaCriada,
+                   receitaCriada,
                  "salvo com sucesso"
              )
 
@@ -152,7 +156,7 @@ class ReceitaUseCase @Inject constructor(
     override suspend fun addReceitaToUserList(receitaView: ReceitaView): ResultadoOperacaoDb {
 
              val receita =MapReceita.receitaViewToReceita(receitaView).copy(isUserList = true)
-           Const.exibilog("user List  : ${receita.isUserList}")
+
              val resultadoOperacaoDb =criarReceita(receita)
                 return  resultadoOperacaoDb
     }

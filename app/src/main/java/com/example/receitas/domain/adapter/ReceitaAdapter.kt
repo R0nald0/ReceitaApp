@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.receitas.R
-import com.example.receitas.shared.constant.Const
+
 import com.example.receitas.databinding.RcvItemLayoutBinding
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.view.DetalhesActivity
@@ -24,8 +24,6 @@ class ReceitaAdapter(
     fun adicionarLista(lista : MutableList<ReceitaView> ){
          listReceita = lista
          notifyDataSetChanged()
-        Const.exibilog("tamanho lista" +
-                " ${listReceita.size}")
     }
 
      inner class  ReceitasViewHolder(item:RcvItemLayoutBinding) : RecyclerView.ViewHolder(item.root){

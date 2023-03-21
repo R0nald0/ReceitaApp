@@ -142,19 +142,16 @@ class DetalhesActivity : AppCompatActivity() {
    private  fun getViewReceita() {
         with(binding) {
 
+            val image = receitaView.checkImg()
+            if (image != null)Picasso.get().load(Uri.parse(image)).into(idImgReceitaDetalhes)
+            else Picasso.get().load(R.drawable.demos).into(idImgReceitaDetalhes)
+
              if (receitaView.isUserList){
                 imgBtnAddUserList.visibility = View.GONE
 
-               if (receitaView.ImageUrl.isEmpty())
-                     Picasso.get().load(Uri.parse(receitaView.Imagem))
-                         .placeholder(R.drawable.ic_image_24)
-                         .into(idImgReceitaDetalhes)
-                else{
-                   Picasso.get().load(Uri.parse(receitaView.ImageUrl))
-                       .placeholder(R.drawable.ic_image_24)
-                       .into(idImgReceitaDetalhes)
-                   }
-
+                 val imagem = receitaView.checkImg()
+                 if (imagem != null)Picasso.get().load(Uri.parse(imagem)).into(idImgReceitaDetalhes)
+                 else Picasso.get().load(R.drawable.demos).into(idImgReceitaDetalhes)
             }
             else {
                 imgBtnEditar.visibility = View.GONE
@@ -163,7 +160,7 @@ class DetalhesActivity : AppCompatActivity() {
             }
 
             txvReceitaInstrcoes.text = receitaView.instrucao
-            TxvTempoReceitaDetalhes.text = receitaView.tempo
+            TxvTempoReceitaDetalhes.text = "${receitaView.tempo}min"
             TxvTituloReceitaDetalhes.text = receitaView.titulo.uppercase()
             idTxvIngredientesReceitaDetalhes.text =receitaView.ingredientes
 
@@ -187,7 +184,7 @@ class DetalhesActivity : AppCompatActivity() {
                                    "Ingredientes: ${receitaView.ingredientes}"
 
                         )
-                        shareIntent.putExtra(Intent.EXTRA_STREAM,Uri.parse(receitaView.Imagem))
+                        shareIntent.putExtra(Intent.EXTRA_STREAM,receitaView.Imagem)
                         shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
 
                        startActivity(Intent.createChooser(shareIntent,"Item receita"))

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BottomSheetDialogg" parent="Theme.Material3.DayNight.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetStyle</item>
+        <item name="borderRound">23dp</item>
+
+    </style>
+
+    <style name="BottomSheetStyle" parent="Widget.Design.BottomSheet.Modal">
+         <item name="background">@android:color/transparent</item>
+    </style>
+
+    <style name="TextStyle" parent="TextAppearance.AppCompat">
+         <item name="android:textColor">@color/black</item>
+    </style>
+
+    <style name="ImagemRounded" >
+        <item name="cornerSize">60%</item>
+        <item name="backgroundTint">@color/vermelho_forte</item>
+    </style>
+
+    <style name="ImageBannerStyle">
+         <item name="cornerSize">30%</item>
+    </style>
+</resources>

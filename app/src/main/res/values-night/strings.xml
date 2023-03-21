@@ -1,7 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Receitas</string>
-    <string name="campo_preenchido">Campo Preenchidos</string>
-    <string name="preencha_camopo">Preencha os campo</string>
     <string name="alerta_ingrediente_campo">insira os ingrediente da receitas</string>
     <string name="alerta_instrucao">insira as intrucões receita</string>
     <string name="alerta_tempo_preparo">insira o tempo de preparo</string>

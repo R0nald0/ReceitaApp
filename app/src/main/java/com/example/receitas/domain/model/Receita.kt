@@ -8,7 +8,7 @@ data class Receita(
      var idRealm : ObjectId?,
      var isUserList : Boolean,
      var titulo :String,
-     var Imagem : String,
+     var Imagem : Uri?,
      var ImagemUrl :String,
      var instrucoes :String,
      var tempo :String = "00",

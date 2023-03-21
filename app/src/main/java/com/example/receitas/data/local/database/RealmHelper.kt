@@ -2,6 +2,7 @@ package com.example.receitas.data.local.database
 
 import com.example.receitas.data.model.ReceitaData
 import com.example.receitas.data.service.interf.IServiceReceitaDb
+import com.example.receitas.shared.constant.Const
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.ext.query
@@ -30,23 +31,11 @@ class RealmHelper @Inject constructor(
 
     override suspend fun post(receita: ReceitaData): Boolean {
 
-
-
          try {
-            realmDb.write{
-                this.copyToRealm(
-                    ReceitaData().apply {
-                        this.time = receita.time
-                        this.image =receita.image
-                        this.isUserList = receita.isUserList
-                        this.imageLink =receita.imageLink
-                        this.ingrediente = receita.ingrediente
-                        this.instrucao =receita.instrucao
-                        this.nome =receita.nome
-                    }
-                )
-
+         val re = realmDb.write{
+                this.copyToRealm(receita)
             }
+
             return true
 
         } catch (e :IllegalArgumentException){
@@ -82,7 +71,8 @@ class RealmHelper @Inject constructor(
             }
             return true
         }catch (e:Exception){
-            throw Exception("erro ao deletar no banco : ${e.message} -- ${e.stackTrace}" )
+            e.printStackTrace()
+            throw Exception("erro ao deletar no banco : ${e.message}")
         }
     }
 }

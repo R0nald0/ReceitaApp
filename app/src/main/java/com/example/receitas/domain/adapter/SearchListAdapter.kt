@@ -2,6 +2,7 @@ package com.example.receitas.domain.adapter
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -25,15 +26,10 @@ class SearchListAdapter :Adapter<SearchListAdapter.SearchViewHolder>() {
             binding = itemLayout
         }
         fun bind(receitaView :ReceitaView){
-             if(receitaView.ImageUrl.isNotEmpty()){
-                 Picasso.get().load(receitaView.ImageUrl)
-                     .placeholder(R.drawable.ic_image_24)
-                     .into(binding.imgSearchReceita)
-             }else{
-                 Picasso.get().load(receitaView.Imagem)
-                     .placeholder(R.drawable.ic_image_24)
-                     .into(binding.imgSearchReceita)
-             }
+            val image = receitaView.checkImg()
+            if (image != null)Picasso.get().load(Uri.parse(image)).into(binding.imgSearchReceita)
+            else Picasso.get().load(R.drawable.demos).into(binding.imgSearchReceita)
+
             binding.txvTituloSearchReceita.text = receitaView.titulo
             itemView.setOnClickListener {
                 val intens = Intent(it.context,DetalhesActivity::class.java)

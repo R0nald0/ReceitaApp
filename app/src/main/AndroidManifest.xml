@@ -34,7 +34,7 @@
         <activity
             android:name=".presentation.view.SalvarEditarActivity"
             android:exported="false"
-            android:theme="@style/AppThemeDetalhes"
+
             android:parentActivityName=".presentation.view.MainActivity"/>
         <activity
             android:name=".presentation.view.DetalhesActivity"
