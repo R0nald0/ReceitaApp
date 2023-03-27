@@ -28,12 +28,10 @@ class ReceitaView(
         if (this.ImageUrl.isEmpty()) {
             if (this.Imagem.toString().isEmpty())
                 return null
-               // Picasso.get().load(R.drawable.demos).into(imgView)
             else
                return this.Imagem.toString()
         }
         else return this.ImageUrl
-
     }
 }
 data class ReceitaViewCreate(

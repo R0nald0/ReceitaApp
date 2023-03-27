@@ -31,10 +31,10 @@ class SearchListAdapter :Adapter<SearchListAdapter.SearchViewHolder>() {
             else Picasso.get().load(R.drawable.demos).into(binding.imgSearchReceita)
 
             binding.txvTituloSearchReceita.text = receitaView.titulo
-            itemView.setOnClickListener {
-                val intens = Intent(it.context,DetalhesActivity::class.java)
+            itemView.setOnClickListener {view->
+                val intens = Intent(view.context,DetalhesActivity::class.java)
                      intens.putExtra("receita",receitaView)
-                ContextCompat.startActivity(it.context,intens,null)
+                ContextCompat.startActivity(view.context,intens,null)
             }
         }
     }

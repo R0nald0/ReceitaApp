@@ -6,4 +6,6 @@
     <string name="alerta_instrucao">insira as intrucões receita</string>
     <string name="alerta_tempo_preparo">insira o tempo de preparo</string>
     <string name="alerta_nome_receita">Digite o nome da receita</string>
+    <string name="erro_carregar">Erro ao carregar</string>
+    <string name="lista_vazia">Lista vazia</string>
 </resources>

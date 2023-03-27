@@ -1,29 +1,25 @@
 package com.example.receitas.presentation.view
 
 
-import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 
-import android.view.WindowManager
 import android.widget.SearchView
 
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.receitas.R
 import com.example.receitas.domain.adapter.AreaListAdapter
 import com.example.receitas.domain.adapter.ReceitaAdapter
 import com.example.receitas.domain.adapter.UserReceitasAdapter
-import com.example.receitas.shared.constant.Const
 import com.example.receitas.data.model.Dto.Area
 import com.example.receitas.databinding.ActivityMainBinding
 import com.example.receitas.databinding.CadastrarReceitaLayoutBinding
 import com.example.receitas.domain.adapter.SearchListAdapter
+import com.example.receitas.domain.results.AppStateList
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.MainViewModel
 import com.example.receitas.shared.extension.showToast
@@ -72,9 +68,7 @@ class MainActivity : AppCompatActivity() {
             mainViewModel.recuperarArea(nameArea)
         }
 
-        userReceitasAdapter = UserReceitasAdapter {
-
-        }
+        userReceitasAdapter = UserReceitasAdapter {}
         searchListAdapter =SearchListAdapter()
 
     }
@@ -98,7 +92,7 @@ class MainActivity : AppCompatActivity() {
             if (it !=null ){
                 adapter!!.adicionarLista( it as MutableList<ReceitaView>)
             }else{
-                applicationContext.showToast("Lista vazia")
+                applicationContext.showToast(getString(R.string.lista_vazia))
             }
         }
 
@@ -137,7 +131,22 @@ class MainActivity : AppCompatActivity() {
                  }
                  binding.imgSlideCarousel.setData(listImage)
              }else{
-                 showToast("Erro ao carregar")
+                 showToast(getString(R.string.erro_carregar))
+             }
+        }
+        mainViewModel.appStateList.observe(this){
+             when(it){
+                AppStateList.loading ->{
+                    binding.rcvArea.visibility = View.GONE
+                    binding.rcvListReceitaApi.visibility = View.GONE
+                    binding.progressBar.visibility = View.VISIBLE
+                }
+                AppStateList.loaded ->{
+                    binding.rcvArea.visibility = View.VISIBLE
+                    binding.rcvListReceitaApi.visibility = View.VISIBLE
+                    binding.progressBar.visibility = View.GONE
+                }
+                 else -> {}
              }
         }
 
@@ -146,8 +155,8 @@ class MainActivity : AppCompatActivity() {
 
     fun initListeners(){
         with(binding){
-            idRcView.adapter = adapter
-            idRcView.layoutManager =LinearLayoutManager(applicationContext,LinearLayoutManager.HORIZONTAL,false)
+            rcvListReceitaApi.adapter = adapter
+            rcvListReceitaApi.layoutManager =LinearLayoutManager(applicationContext,LinearLayoutManager.HORIZONTAL,false)
 
 
             rcvArea.adapter= areaAdapter
@@ -166,7 +175,14 @@ class MainActivity : AppCompatActivity() {
                startActivity(Intent(this@MainActivity,SalvarEditarActivity::class.java))
             }
 
-            searchViewBtn.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+            initSearchBar()
+
+        }
+    }
+
+    private fun initSearchBar() {
+      binding.searchViewBtn.setOnQueryTextListener(object :SearchView.OnQueryTextListener{
+
             override fun onQueryTextSubmit(query: String?): Boolean {
                 if (query !=null){
                     mainViewModel.pesquisarReceita(query)
@@ -176,23 +192,19 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                 if (newText !=null){
-                     mainViewModel.pesquisarReceita(newText)
-                     if(newText.length >0){
-                         binding.rcvSearchReceitas.visibility = View.VISIBLE
-                     }else{
-                         binding.rcvSearchReceitas.visibility =View.GONE
-                     }
-                 }
+                if (newText !=null){
+                    mainViewModel.pesquisarReceita(newText)
+                    if(newText.length >0){
+                        binding.rcvSearchReceitas.visibility = View.VISIBLE
+                    }else{
+                        binding.rcvSearchReceitas.visibility =View.GONE
+                    }
+                }
 
-               return true
+                return true
             }
 
         } )
-
-
-
-        }
     }
 
 }

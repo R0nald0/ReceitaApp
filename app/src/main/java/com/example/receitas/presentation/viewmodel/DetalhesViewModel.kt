@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.receitas.domain.interf.IReceitaUseCase
+import com.example.receitas.domain.results.AppStateList
 import com.example.receitas.domain.results.ResultadoOperacaoDb
 import com.example.receitas.mapReceita.MapReceita
 import com.example.receitas.presentation.model.ReceitaView
@@ -18,6 +19,7 @@ import javax.inject.Inject
 class DetalhesViewModel @Inject constructor(
    private val receitaUseCase :IReceitaUseCase
 ): ViewModel() {
+
     private val _receitaLiveData = MutableLiveData<ReceitaView>()
     val receitaView : LiveData<ReceitaView>
        get() = _receitaLiveData
@@ -30,16 +32,20 @@ class DetalhesViewModel @Inject constructor(
     val _resultOperacaoLiveDataAddReceita =MutableLiveData<ResultadoOperacaoDb>()
     val resultOperacaoLiveDataAddReceita : LiveData<ResultadoOperacaoDb>
        get() = _resultOperacaoLiveDataAddReceita
+    val appStateList = MutableLiveData<AppStateList>()
 
     fun getReceitaByName(receitaView:ReceitaView){
+        appStateList.value = AppStateList.loading
         viewModelScope.launch {
             if (receitaView.isUserList){
                 _receitaLiveData.value =receitaView
+                appStateList.value = AppStateList.loaded
             }else{
                 val receita = MapReceita.receitaViewToReceita(receitaView)
 
                 val receitaViewApi = receitaUseCase.getReceitaByName(receita.titulo)
                 _receitaLiveData.postValue(receitaViewApi)
+                appStateList.value = AppStateList.loaded
             }
         }
     }

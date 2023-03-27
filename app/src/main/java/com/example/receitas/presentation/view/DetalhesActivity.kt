@@ -14,6 +14,7 @@ import androidx.activity.viewModels
 import androidx.core.view.MenuProvider
 import com.example.receitas.R
 import com.example.receitas.databinding.ActivityDetalhesBinding
+import com.example.receitas.domain.results.AppStateList
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.DetalhesViewModel
 import com.example.receitas.shared.constant.Const
@@ -59,7 +60,7 @@ class DetalhesActivity : AppCompatActivity() {
                 //TODO iniciar video
             }
             imgBtnEditar.setOnClickListener {
-                goToSalvarEditarReceita()
+                goToSaveEditReceita()
             }
             imgBtnDeletar.setOnClickListener {
                  val receitaAtaul = getIntentExtraReceitaName()
@@ -77,7 +78,7 @@ class DetalhesActivity : AppCompatActivity() {
         super.onStart()
         viewModel.getReceitaByName(getIntentExtraReceitaName())
     }
-    fun goToSalvarEditarReceita(){
+    private fun goToSaveEditReceita(){
         val  receita = receitaView
         val intent =Intent(this,SalvarEditarActivity::class.java)
         intent.putExtra(Const.TEXT_INTENT_EXTRAS_RECEITA,receita)
@@ -107,6 +108,23 @@ class DetalhesActivity : AppCompatActivity() {
                applicationContext.showToast(it.mensagem)
             }else{
                 applicationContext.showToast(it.mensagem)
+            }
+        }
+        viewModel.appStateList.observe(this){
+            when(it){
+                AppStateList.loading ->{
+                    binding.scrollView2.visibility = View.GONE
+                    binding.idImgReceitaDetalhes.visibility = View.GONE
+                    binding.btnPlay.visibility = View.GONE
+                    binding.progressBar2.visibility = View.VISIBLE
+                }
+                AppStateList.loaded ->{
+                    binding.scrollView2.visibility = View.VISIBLE
+                    binding.idImgReceitaDetalhes.visibility = View.VISIBLE
+                    binding.btnPlay.visibility = View.VISIBLE
+                    binding.progressBar2.visibility = View.GONE
+                }
+                else -> {}
             }
         }
  }

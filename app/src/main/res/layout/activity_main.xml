@@ -17,7 +17,7 @@
             android:layout_width="0dp"
             android:layout_height="100dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
             android:textAlignment="center"
             app:autoPlay="true"
@@ -27,25 +27,27 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/idRcView"
+            app:layout_constraintTop_toBottomOf="@+id/rcv_list_receita_api"
+            app:layout_constraintTop_toTopOf="@+id/guideline3"
             app:showBottomShadow="true"
             app:showIndicator="false"
             app:showNavigationButtons="false" />
 
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/idRcView"
+            android:id="@+id/rcv_list_receita_api"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
+            android:layout_marginBottom="16dp"
             android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/guideline3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rcv_area"
-            tools:visibility="visible" />
+            app:layout_constraintTop_toBottomOf="@+id/rcv_area" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcv_area"
@@ -81,7 +83,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="24dp"
             android:layout_marginEnd="16dp"
             android:text="Minhas Receitas"
             android:textSize="15dp"
@@ -177,6 +179,25 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/search_view_btn"
             tools:visibility="visible" />
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            android:layout_marginStart="150dp"
+            android:layout_marginEnd="150dp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txv_titulo_app" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guideline3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.52" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
