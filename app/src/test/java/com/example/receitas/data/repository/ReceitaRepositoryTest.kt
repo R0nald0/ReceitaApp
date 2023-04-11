@@ -1,14 +1,14 @@
 package com.example.receitas.data.repository
 
-import android.net.Uri
-import com.example.receitas.data.model.ReceitaData
+import com.example.receitas.data.local.database.AreaHelper
+import com.example.receitas.data.model.ReceitaDAO
+import com.example.receitas.data.remote.model.Dto.AreaDTO
 import com.google.common.truth.Truth.assertThat
 
 import com.example.receitas.data.service.ReceitaBannerService
 
 import com.example.receitas.data.service.interf.IServiceApi
 import com.example.receitas.data.service.interf.IServiceReceitaDb
-import com.example.receitas.domain.model.Receita
 import kotlinx.coroutines.test.runTest
 
 import org.junit.After
@@ -20,25 +20,24 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
-import org.mongodb.kbson.BsonObjectId
-import org.mongodb.kbson.ObjectId
 
 
 @RunWith(MockitoJUnitRunner::class)
 class ReceitaRepositoryTest {
-    @Mock
-    lateinit var   mockReceitaBanner : ReceitaBannerService
+      @Mock
+     lateinit var   mockReceitaBanner : ReceitaBannerService
       @Mock
      lateinit var mockServoceApi : IServiceApi
       @Mock
      lateinit var mockServiceReceitaDb :IServiceReceitaDb
-     @Mock
+      @Mock
+      lateinit var  areaHelper: AreaHelper
      lateinit var  receitaRepository : ReceitaRepository
 
     @Before
     fun setUp() = runTest {
         MockitoAnnotations.openMocks(this)
-          receitaRepository= ReceitaRepository(mockServiceReceitaDb,mockServoceApi,mockReceitaBanner)
+          receitaRepository= ReceitaRepository(mockServiceReceitaDb,mockServoceApi,mockReceitaBanner,areaHelper)
           Mockito.`when`(mockServiceReceitaDb.searchByName( ArgumentMatchers.anyString())).thenReturn(lista)
     }
     @Test
@@ -49,14 +48,38 @@ class ReceitaRepositoryTest {
 
     }
 
+    @Test
+    fun  `saveListAreaApiToDb_must return true if it manages to save the list in the database`()= runTest(){
+        Mockito.`when`(mockServoceApi.getArealMeal()).thenReturn(
+            listOf(
+                AreaDTO("canada"),
+                AreaDTO("espanha")
+            )
+        )
+        val result = receitaRepository.saveListAreaApiToDb()
+        assertThat(result).isTrue()
+    }
+    @Test
+    fun  `saveListAreaApiToDb_must return false if not saving the list in the database`()= runTest(){
+        Mockito.`when`(mockServoceApi.getArealMeal()).thenReturn(
+            listOf()
+        )
+        val result = receitaRepository.saveListAreaApiToDb()
+        assertThat(result).isFalse()
+    }
+
     @After
     fun tearDown() {
+    }
+
+    @Test
+    fun saveListAreaApiToDb() {
     }
 
 }
 
 val lista = listOf(
-    ReceitaData().apply {
+    ReceitaDAO().apply {
         this.nome= "Feijoaado"
         this.time = "34"
         this.instrucao= "Deixar no fogo por 4 minutos"
@@ -64,7 +87,7 @@ val lista = listOf(
         this.imageLink = "link imagem"
         this.isUserList = true
     },
-    ReceitaData().apply {
+    ReceitaDAO().apply {
         this.nome= "Lasanha"
         this.time = "34"
         this.instrucao= "Deixar no fogo por 4 minutos"
@@ -72,7 +95,7 @@ val lista = listOf(
         this.imageLink = "link imagem"
         this.isUserList = true
     },
-    ReceitaData().apply {
+    ReceitaDAO().apply {
         this.nome= "cafe"
         this.time = "34"
         this.instrucao= "Deixar no fogo por 4 minutos"

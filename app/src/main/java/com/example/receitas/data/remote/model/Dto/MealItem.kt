@@ -1,4 +1,4 @@
-package com.example.receitas.data.model.Dto
+package com.example.receitas.data.remote.model.Dto
 
 data class MealItem(
     val dateModified: Any,

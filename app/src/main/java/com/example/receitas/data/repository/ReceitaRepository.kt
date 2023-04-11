@@ -1,65 +1,79 @@
 package com.example.receitas.data.repository
 
-import com.example.receitas.shared.constant.Const
-import com.example.receitas.data.model.Dto.Area
+import com.example.receitas.data.local.database.AreaHelper
+import com.example.receitas.data.local.model.toArea
+import com.example.receitas.data.remote.model.Dto.toAreaDAO
 
 import com.example.receitas.data.repository.interf.IRepository
 import com.example.receitas.data.service.ReceitaBannerService
 import com.example.receitas.data.service.interf.IServiceApi
 import com.example.receitas.data.service.interf.IServiceReceitaDb
+import com.example.receitas.domain.model.Area
 import com.example.receitas.domain.model.Receita
 import com.example.receitas.mapReceita.MapReceita
+import com.example.receitas.shared.constant.Const
 import javax.inject.Inject
 
 
 class  ReceitaRepository @Inject constructor(
     private val service :IServiceReceitaDb,
     private val serviceApi :IServiceApi,
-    private val receitaBannerService: ReceitaBannerService
-
+    private val receitaBannerService: ReceitaBannerService,
+    private val areaService: AreaHelper
     ) :IRepository{
 
-    override suspend fun perquisarReceita(pequisa: String): List<Receita> {
+    override
+    suspend fun perquisarReceita(pequisa: String): List<Receita> {
          val retorno = service.searchByName(pequisa)
         if (retorno.isNotEmpty()){
               val listReceita =  retorno.map {
-                    MapReceita.receitaDataToReceita(it)
+                    MapReceita.receitaDaoToReceita(it)
               }
             return  listReceita
         }
         return listOf()
     }
 
-    override suspend fun recuperarListaArea(): List<Area> {
-          val listArea = serviceApi.getArealMeal()
-         if (listArea !=null){
+    override
+    suspend fun recuperarListaArea(): List<Area> {
+          var listAreaDao = areaService.getAll()
+          if (listAreaDao.isNotEmpty()){
+              val listArea = listAreaDao.map{ areaDAO ->
+                    areaDAO.toArea()
+              }
               return listArea
-         }
-        return listOf()
+          }else{
+              val retorno  =  saveListAreaApiToDb()
+              if (retorno){
+                  listAreaDao = areaService.getAll()
+                  return  listAreaDao.map{ areaDAO ->
+                      areaDAO.toArea()
+                  }
+              }
+              return listOf()
+          }
+
     }
     override
-    suspend fun recuperarListaReceitasApi(areaName:String): List<Receita> {
-        val listApi   = serviceApi.getMealsFromArea(areaName)
+    suspend fun saveListAreaApiToDb(): Boolean {
+        val listAreaDto = serviceApi.getArealMeal()
 
-        if (listApi !=null){
-            val listaReceit = listApi.map{
-               val receitaData = MapReceita.convertMealListItemToReceitaData(it)
-                MapReceita.receitaDataToReceita(receitaData)
+        if (listAreaDto.isNotEmpty()){
+            val listAreaDao = listAreaDto.map{areaDTO ->
+                 areaDTO.toAreaDAO()
             }
-            return  listaReceit
+            areaService.post(listAreaDao)
+            return true
         }
-        return emptyList()
+        return false
     }
-    override suspend fun recuperarListaReceitas(): List<Receita> {
+    override
+    suspend fun getUserListReceitasDb(): List<Receita> {
           val listaReceitaApi = service.getAll()
-        listaReceitaApi.forEach {
-
-        }
 
         if (listaReceitaApi !=null){
-
              val listaReceitas =listaReceitaApi.map {
-                  MapReceita.receitaDataToReceita(it)
+                  MapReceita.receitaDaoToReceita(it)
              }
 
             return  listaReceitas
@@ -67,13 +81,14 @@ class  ReceitaRepository @Inject constructor(
         return emptyList()
     }
 
-    override suspend fun recuperarReceitasPorArea(areaName: String): List<Receita> {
+    override
+    suspend fun recuperarReceitasPorArea(areaName: String): List<Receita> {
           if (areaName.isNotEmpty()){
               val listaReceitaData = serviceApi.getMealsFromArea(areaName).map {
                   MapReceita.convertMealListItemToReceitaData(it)
               }
             val listaReceita = listaReceitaData.map {
-                 MapReceita.receitaDataToReceita(it)
+                 MapReceita.receitaDaoToReceita(it)
               }
 
               return  listaReceita
@@ -81,16 +96,16 @@ class  ReceitaRepository @Inject constructor(
               return listOf()
           }
     }
-
-    override suspend fun recuperaReceitaId(receita: Receita): Receita {
-        val  recetabd=MapReceita.rceitaToReceitaData(receita)
-        return MapReceita.receitaDataToReceita(recetabd)
+    override
+    suspend fun recuperaReceitaId(receita: Receita): Receita {
+        val  recetabd=MapReceita.receitaToReceitaDAO(receita)
+        return MapReceita.receitaDaoToReceita(recetabd)
     }
     override suspend fun recuperaReceitaPorNome(nomeReceita: String): Receita? {
            if (nomeReceita !=null){
                 val meal = serviceApi.getMealByName(nomeReceita)
                if (meal != null) {
-                return  MapReceita.receitaDataToReceita(
+                return  MapReceita.receitaDaoToReceita(
                        MapReceita.convertMealListItemToReceitaData(meal)
                   )
                }
@@ -100,18 +115,18 @@ class  ReceitaRepository @Inject constructor(
 
     override  suspend fun criarReceita(receita: Receita): Boolean {
 
-         val receitaData = MapReceita.rceitaToReceitaData(receita)
+         val receitaData = MapReceita.receitaToReceitaDAO(receita)
         return   service.post(receitaData)
     }
 
     override  suspend fun atualizarReceita( receita: Receita): Boolean {
-          val receitaData = MapReceita.rceitaToReceitaData(receita)
+          val receitaData = MapReceita.receitaToReceitaDAO(receita)
           val receitaAtualizado = service.putch( receitaData)
           return receitaAtualizado
      }
 
     override suspend fun deletarReceita(receita: Receita) :Boolean {
-        val  receitaData = MapReceita.rceitaToReceitaData(receita)
+        val  receitaData = MapReceita.receitaToReceitaDAO(receita)
         return service.delete(receitaData._idRealme)
     }
 
@@ -119,7 +134,7 @@ class  ReceitaRepository @Inject constructor(
          val listaBannerReceita = receitaBannerService.getReceitasBannerList()
           if (listaBannerReceita.isNotEmpty()){
                    val receitasBanners =listaBannerReceita.map {receitaData->
-                        MapReceita.receitaDataToReceita(receitaData)
+                        MapReceita.receitaDaoToReceita(receitaData)
                    }
               return receitasBanners
           }else{

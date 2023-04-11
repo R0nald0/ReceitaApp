@@ -1,8 +1,8 @@
 package com.example.receitas.mapReceita
 
 import android.net.Uri
-import com.example.receitas.data.model.Dto.MealItem
-import com.example.receitas.data.model.ReceitaData
+import com.example.receitas.data.remote.model.Dto.MealItem
+import com.example.receitas.data.model.ReceitaDAO
 import com.example.receitas.domain.model.Receita
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.model.ReceitaViewCreate
@@ -11,8 +11,8 @@ import org.mongodb.kbson.ObjectId
 
 object MapReceita {
 
-    fun convertMealListItemToReceitaData(mealItem: MealItem) :ReceitaData{
-         return  ReceitaData().apply {
+    fun convertMealListItemToReceitaData(mealItem: MealItem) :ReceitaDAO{
+         return  ReceitaDAO().apply {
              this.isUserList= false
              this.nome = mealItem.strMeal
              this.imageLink =mealItem.strMealThumb
@@ -32,8 +32,8 @@ object MapReceita {
                      "${ mealItem.strIngredient15}\n"
          }
     }
-    fun rceitaToReceitaData(receita: Receita):ReceitaData{
-         return ReceitaData().apply {
+    fun receitaToReceitaDAO(receita: Receita):ReceitaDAO{
+         return ReceitaDAO().apply {
              this._idRealme = receita.idRealm!!
              this.isUserList = receita.isUserList
              this.nome = receita.titulo
@@ -45,15 +45,15 @@ object MapReceita {
          }
     }
 
-    fun receitaDataToReceita(receitaData: ReceitaData)=Receita (
-        idRealm = receitaData._idRealme,
-        isUserList = receitaData.isUserList,
-        titulo = receitaData.nome,
-        Imagem  = Uri.parse(receitaData.image ),
-        ImagemUrl= receitaData.imageLink,
-        instrucoes= receitaData.instrucao,
-        tempo = receitaData.time,
-        ingredientes = receitaData.ingrediente
+    fun receitaDaoToReceita(receitaDAO: ReceitaDAO)=Receita (
+        idRealm = receitaDAO._idRealme,
+        isUserList = receitaDAO.isUserList,
+        titulo = receitaDAO.nome,
+        Imagem  = Uri.parse(receitaDAO.image ),
+        ImagemUrl= receitaDAO.imageLink,
+        instrucoes= receitaDAO.instrucao,
+        tempo = receitaDAO.time,
+        ingredientes = receitaDAO.ingrediente
         )
 
     fun receitaViewToReceita(receitaView: ReceitaView)= Receita(

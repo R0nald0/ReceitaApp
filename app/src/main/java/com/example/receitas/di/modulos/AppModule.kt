@@ -1,6 +1,7 @@
 package com.example.receitas.di.modulos
 
-import com.example.receitas.data.local.database.RealmHelper
+import com.example.receitas.data.local.database.AreaHelper
+import com.example.receitas.data.local.database.ReceitaHelper
 import com.example.receitas.data.local.database.RealmeDb
 import com.example.receitas.data.repository.ReceitaRepository
 import com.example.receitas.data.repository.interf.IRepository
@@ -31,15 +32,20 @@ class AppModule {
     fun provideRepositoryReceita(
         serviceReceita:IServiceReceitaDb,
         receitaServiceApi: IServiceApi,
-        receitaBannerService: ReceitaBannerService
+        receitaBannerService: ReceitaBannerService,
+        areaHelper: AreaHelper
         ):IRepository{
-          return ReceitaRepository(serviceReceita,receitaServiceApi,receitaBannerService)
+          return ReceitaRepository(serviceReceita,receitaServiceApi,receitaBannerService,areaHelper)
     }
 
     @Provides()
      fun provideService(realm : Realm):IServiceReceitaDb{
-         return  RealmHelper(realm)
+         return  ReceitaHelper(realm)
      }
+    @Provides()
+    fun provideAreaHelper(realm : Realm):AreaHelper{
+        return  AreaHelper(realm)
+    }
     @Provides()
     fun provideRealmDb(): Realm {
         return RealmeDb().getRealm()

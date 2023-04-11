@@ -10,6 +10,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.widget.MediaController
 import androidx.activity.viewModels
 import androidx.core.view.MenuProvider
 import com.example.receitas.R
@@ -19,6 +20,7 @@ import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.DetalhesViewModel
 import com.example.receitas.shared.constant.Const
 import com.example.receitas.shared.extension.showToast
+import com.example.receitas.shared.extension.showsnackBar
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
@@ -30,6 +32,9 @@ class DetalhesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetalhesBinding
     private val viewModel :DetalhesViewModel by viewModels()
     private lateinit var  receitaView : ReceitaView
+    private val mediaController by lazy {
+        MediaController(this)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityDetalhesBinding.inflate(layoutInflater)
@@ -47,18 +52,15 @@ class DetalhesActivity : AppCompatActivity() {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 scrollView2.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
                     if (scrollY > oldScrollY  ) {
-                         btnPlay.visibility =View.GONE
+
                     } else {
-                       btnPlay.visibility =View.VISIBLE
+
                     }
                 }
             } else {
                 TODO("VERSION.SDK_INT < M")
             }
 
-            btnPlay.setOnClickListener {
-                //TODO iniciar video
-            }
             imgBtnEditar.setOnClickListener {
                 goToSaveEditReceita()
             }
@@ -115,13 +117,13 @@ class DetalhesActivity : AppCompatActivity() {
                 AppStateList.loading ->{
                     binding.scrollView2.visibility = View.GONE
                     binding.idImgReceitaDetalhes.visibility = View.GONE
-                    binding.btnPlay.visibility = View.GONE
+
                     binding.progressBar2.visibility = View.VISIBLE
                 }
                 AppStateList.loaded ->{
                     binding.scrollView2.visibility = View.VISIBLE
                     binding.idImgReceitaDetalhes.visibility = View.VISIBLE
-                    binding.btnPlay.visibility = View.VISIBLE
+
                     binding.progressBar2.visibility = View.GONE
                 }
                 else -> {}
@@ -157,6 +159,7 @@ class DetalhesActivity : AppCompatActivity() {
             }.create().show()
 
     }
+
    private  fun getViewReceita() {
         with(binding) {
 
@@ -214,7 +217,6 @@ class DetalhesActivity : AppCompatActivity() {
 
         })
     }
-    fun showsnackBar(view : View ,messsange:String){
-         Snackbar.make(view,messsange,Snackbar.LENGTH_LONG).show()
-    }
+
+
 }

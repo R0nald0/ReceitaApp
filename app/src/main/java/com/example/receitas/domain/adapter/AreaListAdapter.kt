@@ -1,21 +1,16 @@
 package com.example.receitas.domain.adapter
 
-import android.content.Context
 import android.graphics.drawable.Drawable
 import android.util.SparseArray
-import android.util.SparseBooleanArray
 import android.view.LayoutInflater
 
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.core.util.forEach
-import androidx.core.util.isEmpty
 import androidx.recyclerview.widget.RecyclerView
 import com.example.receitas.R
-import com.example.receitas.shared.constant.Const
-import com.example.receitas.data.model.Dto.Area
+import com.example.receitas.data.remote.model.Dto.AreaDTO
 import com.example.receitas.databinding.ItemAreaLayoutBinding
-import com.example.receitas.presentation.model.ReceitaView
+import com.example.receitas.domain.model.Area
 
 class AreaListAdapter (
      val onclick :(String)->Unit
@@ -36,7 +31,7 @@ class AreaListAdapter (
              bindingArea = itemAreaLayotview
         }
 
-        fun bind(area: Area,onclick: (String) -> Unit,position: Int){
+        fun bind(area: Area, onclick: (String) -> Unit, position: Int){
             val padrao = itemSelecionado[position,ContextCompat.getDrawable(itemView.context,R.drawable.bg_rounded_area_name)]
             bindingArea.constrainLayout.background = padrao
 

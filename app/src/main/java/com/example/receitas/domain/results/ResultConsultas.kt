@@ -1,7 +1,7 @@
 package com.example.receitas.domain.results
 
-import android.icu.lang.UCharacter.GraphemeClusterBreak.T
-import com.example.receitas.data.model.Dto.Area
+import com.example.receitas.data.remote.model.Dto.AreaDTO
+import com.example.receitas.domain.model.Area
 import com.example.receitas.presentation.model.ReceitaView
 
 data class ResultConsultasReceita (

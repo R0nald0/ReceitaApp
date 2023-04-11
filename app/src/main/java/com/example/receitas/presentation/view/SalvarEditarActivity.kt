@@ -56,28 +56,34 @@ class SalvarEditarActivity : AppCompatActivity() {
 
             val receitaView = getIntentExtra()
             if (receitaView !=null){
-                val tempo = binding.edtTempoPreparo.text.toString()
-
-                receitaView.tempo= tempo
-                receitaView.instrucao= binding.edtIntreucoesReceita.text.toString()
-                receitaView.titulo=binding.edtNomeReceita.text.toString()
-                receitaView.ingredientes =binding.edtIngredientesReceita.text.toString()
-                if (image !=null) receitaView.Imagem = image
-
-                mainViewModel.editareceita(receitaView)
-
+                  editar(receitaView)
             }else{
-                val tituloReceita =binding.edtNomeReceita.text.toString()
-                val descricao =binding.edtIntreucoesReceita.text.toString()
-                val ingredientes =binding.edtIngredientesReceita.text.toString()
-                val tempo = binding.edtTempoPreparo.text.toString()
-                var imageReceita = Uri.EMPTY
-                    if (image != null) imageReceita = image
-
-                val receitaCreate =ReceitaViewCreate(tituloReceita,true,imageReceita,tempo,descricao, ingredientes)
-                mainViewModel.verificarCampos(receitaCreate)
+                salvar()
             }
         }
+    }
+
+    private fun salvar(){
+        val tituloReceita =binding.edtNomeReceita.text.toString()
+        val descricao =binding.edtIntreucoesReceita.text.toString()
+        val ingredientes =binding.edtIngredientesReceita.text.toString()
+        val tempo = binding.edtTempoPreparo.text.toString()
+        var imageReceita = Uri.EMPTY
+        if (image != null) imageReceita = image
+
+        val receitaCreate =ReceitaViewCreate(tituloReceita,true,imageReceita,tempo,descricao, ingredientes)
+        mainViewModel.verificarCampos(receitaCreate)
+    }
+    private fun editar(receitaView :ReceitaView){
+        val tempo = binding.edtTempoPreparo.text.toString()
+
+        receitaView.tempo= tempo
+        receitaView.instrucao= binding.edtIntreucoesReceita.text.toString()
+        receitaView.titulo=binding.edtNomeReceita.text.toString()
+        receitaView.ingredientes =binding.edtIngredientesReceita.text.toString()
+        if (image !=null) receitaView.Imagem = image
+
+        mainViewModel.editareceita(receitaView)
     }
 
     override fun onStart() {
@@ -200,7 +206,7 @@ class SalvarEditarActivity : AppCompatActivity() {
 
     }
     private fun getDataReceitaToEditText(){
-          val receitaView =  getIntentExtra()
+        val receitaView =  getIntentExtra()
         if (receitaView != null){
 
             binding.edtNomeReceita.setText( receitaView.titulo)
@@ -218,7 +224,7 @@ class SalvarEditarActivity : AppCompatActivity() {
         with(binding){
             if (edtNomeReceita.text.toString().isEmpty()) edtNomeReceita.error = getString(R.string.alerta_nome_receita)
             else null
-            if (edtTempoPreparo.text.toString().isEmpty()) edtTempoPreparo.error = getString(R.string.alerta_tempo_preparo)
+               if (edtTempoPreparo.text.toString().isEmpty()) edtTempoPreparo.error = getString(R.string.alerta_tempo_preparo)
             else  null
 
             if (edtIntreucoesReceita.text.toString().isEmpty()) edtIntreucoesReceita.error = getString(

@@ -1,8 +1,10 @@
 package com.example.receitas.data.service
 
 import com.example.receitas.shared.constant.Const
-import com.example.receitas.data.model.Dto.*
-import com.example.receitas.data.remote.retrofiApi.RetrofitGetApi
+
+import com.example.receitas.data.remote.model.Dto.AreaDTO
+import com.example.receitas.data.remote.model.Dto.MealItem
+
 import com.example.receitas.data.remote.retrofiApi.TheMealApi
 import com.example.receitas.data.service.interf.IServiceApi
 import retrofit2.Response
@@ -51,7 +53,7 @@ class ReceitaServiceApi @Inject constructor(
         return null
     }
 
-    override suspend fun getArealMeal():  List<Area> {
+    override suspend fun getArealMeal():  List<AreaDTO> {
 
         val response =checkreResponse(retrofitApi.getAreasMeal())
 

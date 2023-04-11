@@ -1,7 +1,6 @@
 package com.example.receitas.domain.useCase
 
 import android.net.Uri
-import com.example.receitas.R
 import com.example.receitas.data.repository.interf.IRepository
 import com.example.receitas.domain.model.Receita
 import com.example.receitas.domain.interf.IReceitaUseCase
@@ -13,7 +12,6 @@ import com.example.receitas.domain.results.VerificaCampos
 import com.example.receitas.mapReceita.MapReceita
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.model.ReceitaViewCreate
-import com.example.receitas.shared.constant.Const
 
 
 import javax.inject.Inject
@@ -23,22 +21,21 @@ class ReceitaUseCase @Inject constructor(
     ) : IReceitaUseCase {
 
     override suspend fun listarArea():ResultConsultasAreas {
-
           try {
               val areas  = repository.recuperarListaArea()
-              return   ResultConsultasAreas(true,"Sucesso ao carregar lista de areas",areas)
+                if(areas.isNotEmpty()){
+                    return   ResultConsultasAreas(true,"Sucesso ao carregar lista de areas",areas)
+                }
+              return   ResultConsultasAreas(true,"Lista vazia",areas)
 
           }catch(ex:Exception){
-              ResultConsultasAreas(false,"erro ao carregar lista de areas", listOf())
-               throw Exception("erro a :${ex.message}")
+              ex.stackTrace
+             return ResultConsultasAreas(false,"erro ao carregar lista de areas", listOf())
           }
     }
     override suspend fun listarReceita(): ResultConsultasReceita {
          try {
-             val listReceita = repository.recuperarListaReceitas()
-             listReceita.forEach {
-
-             }
+             val listReceita = repository.getUserListReceitasDb()
 
              val listaReceitaview = MapReceita.toListReceitaView(listReceita)
              return  ResultConsultasReceita(
@@ -151,8 +148,6 @@ class ReceitaUseCase @Inject constructor(
          val verificaCampos =VerificaCampos(receitaView)
         return verificaCampos
     }
-
-
     override suspend fun addReceitaToUserList(receitaView: ReceitaView): ResultadoOperacaoDb {
 
              val receita =MapReceita.receitaViewToReceita(receitaView).copy(isUserList = true)

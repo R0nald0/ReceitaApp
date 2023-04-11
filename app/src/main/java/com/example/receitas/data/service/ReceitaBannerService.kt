@@ -1,14 +1,14 @@
 package com.example.receitas.data.service
 
 import com.example.receitas.R
-import com.example.receitas.data.model.ReceitaData
+import com.example.receitas.data.model.ReceitaDAO
 
 class ReceitaBannerService {
   private val listReceita = listOf(
-        ReceitaData().apply {
+        ReceitaDAO().apply {
               this.isUserList =false
               this.nome = "Escondidinho de Camarão"
-              this.image ="${R.drawable.carne1}"
+              this.image ="${R.drawable.escondidinho_camarao}"
               this.time ="35min"
               this.ingrediente = (listOf(
                   "1 Kg de camarão branco limpo",
@@ -21,7 +21,7 @@ class ReceitaBannerService {
               ).toString())
 
         },
-        ReceitaData().apply {
+        ReceitaDAO().apply {
             this.isUserList = false
             this.nome ="Panqueca de carne moída"
             this.image = "${ R.drawable.carne2 }"
@@ -37,7 +37,7 @@ class ReceitaBannerService {
                 ).toString()
 
         },
-        ReceitaData().apply {
+        ReceitaDAO().apply {
               this.isUserList= false
               this.nome = "Rocambole de carne moída"
               this.image = "${R.drawable.carne3}"
@@ -51,7 +51,7 @@ class ReceitaBannerService {
                 "sal a gosto",
             ).toString()
         },
-        ReceitaData().apply {
+        ReceitaDAO().apply {
             this.isUserList =false
             this.nome = "Escondidinho de carne seca"
             this.image = "${R.drawable.carne4}"
@@ -70,7 +70,7 @@ class ReceitaBannerService {
         },
     )
 
-    fun getReceitasBannerList ():List<ReceitaData>{
+    fun getReceitasBannerList ():List<ReceitaDAO>{
         if (listReceita.isNotEmpty())  return this.listReceita
           return listOf()
     }

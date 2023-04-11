@@ -16,7 +16,6 @@ import com.example.receitas.shared.constant.Const
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -48,21 +47,20 @@ class MainViewModel @Inject constructor(
 
     init {
         appStateList.value = AppStateList.loading
-
     }
     fun listarAreas(){
            viewModelScope.launch {
                     val resultadoConsulta = receitaUseCase.listarArea()
                    areasResultadoConsultadLiveData.postValue(resultadoConsulta)
                   _listaAreaCarregad = true
-                 listasCarregandas()
+                 verifyListsChanging()
            }
        }
 
-    fun listasCarregandas(){
+    fun verifyListsChanging(){
         Const.exibilog("area  ${_listaAreaCarregad} receita ${_receitalistCarregada}")
         if (_listaAreaCarregad  && _receitalistCarregada){
-                appStateList.value = AppStateList.loaded
+                appStateList.postValue( AppStateList.loaded)
         }
     }
     fun listar(){
@@ -70,7 +68,7 @@ class MainViewModel @Inject constructor(
                val resultado = receitaUseCase.listarReceita()
                 resultadoListConsultaLiveData.postValue(resultado)
                _receitalistCarregada = true
-               listasCarregandas()
+               verifyListsChanging()
            }
 
      }
@@ -85,7 +83,6 @@ class MainViewModel @Inject constructor(
             }
         }
     }
-
 
     fun pesquisarReceita(nomePesquisa:String){
           viewModelScope.launch {

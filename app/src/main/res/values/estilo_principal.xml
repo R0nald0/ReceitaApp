@@ -14,12 +14,22 @@
          <item name="android:textColor">@color/black</item>
     </style>
 
-    <style name="ImagemRounded" >
-        <item name="cornerSize">60%</item>
-        <item name="backgroundTint">@color/vermelho_forte</item>
+    <style name="ImagemRounded"  >
+        <item name="cornerSize">30%</item>
     </style>
 
-    <style name="ImageBannerStyle">
-         <item name="cornerSize">30%</item>
+    <style name="buttonStyle" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">50dp</item>
+        <item name="backgroundTint">@color/vermelho_leve</item>
+
+    </style>
+
+    <style name="TextInputStyle" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxCornerRadiusBottomEnd">30dp</item>
+        <item name="boxCornerRadiusTopEnd">30dp</item>
+        <item name="boxCornerRadiusTopStart">30dp</item>
+        <item name="boxCornerRadiusBottomStart">30dp</item>
+        <item name="boxStrokeWidth">0dp</item>
+        <item name="boxStrokeWidthFocused">0dp</item>
     </style>
 </resources>

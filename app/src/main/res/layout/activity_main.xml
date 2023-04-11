@@ -11,28 +11,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <org.imaginativeworld.whynotimagecarousel.ImageCarousel
-            android:id="@+id/img_slide_carousel"
-            style="@style/Widget.Material3.CardView.Outlined"
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_view_img_slide"
             android:layout_width="0dp"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="16dp"
-            android:textAlignment="center"
-            app:autoPlay="true"
-            app:bottomShadowHeight="60dp"
-            app:captionTextSize="12sp"
-            app:imageScaleType="fitXY"
+            app:cardCornerRadius="40dp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/rcv_list_receita_api"
-            app:layout_constraintTop_toTopOf="@+id/guideline3"
-            app:showBottomShadow="true"
-            app:showIndicator="false"
-            app:showNavigationButtons="false" />
+            app:layout_constraintTop_toTopOf="@+id/guideline3">
 
+            <org.imaginativeworld.whynotimagecarousel.ImageCarousel
+                android:id="@+id/img_slide_carousel"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:contentDescription="carrousel de imagens receitas"
+                android:textAlignment="center"
+                app:autoPlay="true"
+                app:captionTextSize="13sp"
+                app:imageScaleType="fitXY"
+                app:showBottomShadow="true"
+
+                app:showNavigationButtons="false" />
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rcv_list_receita_api"
@@ -90,7 +94,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/img_slide_carousel" />
+            app:layout_constraintTop_toBottomOf="@id/card_view_img_slide" />
 
         <TextView
             android:id="@+id/txv_lista_receita_vazia_texto"
@@ -184,9 +188,9 @@
             android:id="@+id/progressBar"
             style="?android:attr/progressBarStyle"
             android:layout_width="0dp"
-            android:layout_height="100dp"
-            android:layout_marginStart="150dp"
-            android:layout_marginEnd="150dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginEnd="16dp"
             app:layout_constraintBottom_toTopOf="@+id/guideline3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

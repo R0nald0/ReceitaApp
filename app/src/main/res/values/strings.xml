@@ -8,4 +8,7 @@
     <string name="alerta_nome_receita">Digite o nome da receita</string>
     <string name="erro_carregar">Erro ao carregar</string>
     <string name="lista_vazia">Lista vazia</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>

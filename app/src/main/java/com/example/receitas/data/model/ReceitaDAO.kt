@@ -1,12 +1,10 @@
 package com.example.receitas.data.model
-import android.net.Uri
-import com.example.receitas.domain.model.Receita
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.PrimaryKey
 import org.mongodb.kbson.ObjectId
 
 
-class ReceitaData :RealmObject {
+class ReceitaDAO :RealmObject {
      @PrimaryKey
      var _idRealme : ObjectId = ObjectId()
      var isUserList : Boolean = true

@@ -6,8 +6,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".di.BaseAplication"
@@ -18,8 +17,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Receitas"
+        android:theme="@style/Theme.AppSplash"
         tools:targetApi="31">
+
+        <activity
+            android:name=".presentation.view.SplashActivity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -34,14 +37,13 @@
         <activity
             android:name=".presentation.view.SalvarEditarActivity"
             android:exported="false"
-
-            android:parentActivityName=".presentation.view.MainActivity"/>
+            android:theme="@style/Theme.Receitas"
+            android:parentActivityName=".presentation.view.MainActivity" />
         <activity
             android:name=".presentation.view.DetalhesActivity"
-            android:theme="@style/AppThemeDetalhes"
             android:exported="true"
             android:parentActivityName=".presentation.view.MainActivity"
-             />
+            android:theme="@style/AppThemeDetalhes" />
         <activity
             android:name=".presentation.view.MainActivity"
             android:exported="true">

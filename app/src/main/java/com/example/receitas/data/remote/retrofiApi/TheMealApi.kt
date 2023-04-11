@@ -1,8 +1,8 @@
 package com.example.receitas.data.remote.retrofiApi
 
-import com.example.receitas.data.model.Dto.AreaList
-import com.example.receitas.data.model.Dto.Meals
-import com.example.receitas.data.model.Dto.MealAreaList
+import com.example.receitas.data.remote.model.Dto.AreaList
+import com.example.receitas.data.remote.model.Dto.Meals
+import com.example.receitas.data.remote.model.Dto.MealAreaList
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

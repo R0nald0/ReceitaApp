@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_gravity="center_vertical"
-android:fillViewport="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scroll_View_add_receita"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_vertical"
+    android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -31,8 +32,21 @@ android:fillViewport="true">
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <com.google.android.material.imageview.ShapeableImageView
+            android:id="@+id/img_receita_cadastro"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_gravity="center"
+            android:layout_margin="8dp"
+            android:layout_weight="0"
+            android:background="?attr/selectableItemBackground"
+            android:scaleType="fitXY"
+            app:shapeAppearanceOverlay="@style/ImagemRounded"
+            app:srcCompat="@drawable/red_image_search_24" />
+
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txinp_nome_receita"
+            style="@style/TextInputStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -51,46 +65,26 @@ android:fillViewport="true">
                 android:hint="Nome da Receita" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <LinearLayout
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/txinp_tempo_preparo"
+            style="@style/TextInputStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="8dp"
-            android:layout_marginLeft="16dp"
-            android:layout_marginEnd="16dp"
-            android:orientation="horizontal">
+            android:layout_margin="16dp">
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/txinp_tempo_preparo"
-                android:layout_width="wrap_content"
+            <com.vicmikhailau.maskededittext.MaskedEditText
+                android:id="@+id/edt_tempo_preparo"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:layout_weight="0.3">
+                android:hint="Tempo de preparo"
+                android:inputType="time"
+                app:mask="##:##" />
 
-                <com.vicmikhailau.maskededittext.MaskedEditText
-                    android:id="@+id/edt_tempo_preparo"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:hint="Tempo de preparo"
-                    android:inputType="time"
-                    app:mask="##:##" />
-
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <ImageView
-                android:id="@+id/img_receita_cadastro"
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:layout_gravity="center"
-                android:layout_margin="8dp"
-                android:layout_weight="0"
-                android:scaleType="fitXY"
-                app:srcCompat="@drawable/image_search_24" />
-
-        </LinearLayout>
+        </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txinp_ingrediente_receita"
+            style="@style/TextInputStyle"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="top|left"
@@ -103,18 +97,18 @@ android:fillViewport="true">
                 android:id="@+id/edt_ingredientes_receita"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
+                android:foregroundGravity="center"
                 android:hint="Ingredientes"
+                android:isScrollContainer="true"
                 android:overScrollMode="always"
                 android:scrollbarStyle="insideInset"
-                android:isScrollContainer="true"
-                android:singleLine="false"
                 android:scrollbars="vertical"
-                android:foregroundGravity="center"
-               />
+                android:singleLine="false" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/txinp_intreucoes_receita"
+            style="@style/TextInputStyle"
             android:layout_width="match_parent"
             android:layout_height="200dp"
             android:layout_margin="16dp"
@@ -125,21 +119,22 @@ android:fillViewport="true">
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_gravity="top"
-                android:overScrollMode="always"
-                android:scrollbarStyle="insideInset"
-                android:isScrollContainer="true"
-                android:singleLine="false"
-                android:scrollbars="vertical"
                 android:foregroundGravity="center"
                 android:gravity="top|left"
-                android:hint="Instruções" />
+                android:hint="Instruções"
+                android:isScrollContainer="true"
+                android:overScrollMode="always"
+                android:scrollbarStyle="insideInset"
+                android:scrollbars="vertical"
+                android:singleLine="false" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_salvar"
-            style="@style/Widget.AppCompat.Button"
-            android:layout_width="307dp"
+
+            style="@style/buttonStyle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginStart="16dp"

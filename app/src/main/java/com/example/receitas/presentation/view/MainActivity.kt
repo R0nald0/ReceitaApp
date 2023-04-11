@@ -9,22 +9,26 @@ import android.view.View
 import android.widget.SearchView
 
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.receitas.R
 import com.example.receitas.domain.adapter.AreaListAdapter
 import com.example.receitas.domain.adapter.ReceitaAdapter
 import com.example.receitas.domain.adapter.UserReceitasAdapter
-import com.example.receitas.data.model.Dto.Area
 import com.example.receitas.databinding.ActivityMainBinding
-import com.example.receitas.databinding.CadastrarReceitaLayoutBinding
 import com.example.receitas.domain.adapter.SearchListAdapter
+import com.example.receitas.domain.model.Area
 import com.example.receitas.domain.results.AppStateList
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.MainViewModel
 import com.example.receitas.shared.extension.showToast
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.imaginativeworld.whynotimagecarousel.model.CarouselItem
 
 
@@ -45,6 +49,14 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val splash = installSplashScreen()
+        splash.setKeepOnScreenCondition {
+           CoroutineScope(Dispatchers.IO).launch {
+               delay(2000)
+           }
+            false
+        }
+
         setContentView(binding.root)
         supportActionBar?.hide()
         initAdpaters()
@@ -85,7 +97,6 @@ class MainActivity : AppCompatActivity() {
               if (areaNameObserve.isNotEmpty()){
                   areaName = areaNameObserve
               }
-
         }
 
         mainViewModel.listaReceitaLiveData.observe(this){
@@ -116,7 +127,6 @@ class MainActivity : AppCompatActivity() {
         mainViewModel.pesquisaLiveData.observe(this){
              if (it.sucesso){
                  searchListAdapter?.carregarItemList(it.list)
-                 applicationContext.showToast(it.mensagem)
              }else{
                  applicationContext.showToast(it.mensagem)
              }
