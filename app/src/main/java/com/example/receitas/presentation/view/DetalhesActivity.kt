@@ -10,18 +10,17 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
-import android.widget.MediaController
 import androidx.activity.viewModels
 import androidx.core.view.MenuProvider
 import com.example.receitas.R
 import com.example.receitas.databinding.ActivityDetalhesBinding
-import com.example.receitas.domain.results.AppStateList
+import com.example.receitas.domain.results.AppStateRequest
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.DetalhesViewModel
 import com.example.receitas.shared.constant.Const
+import com.example.receitas.shared.dialog.AlertDialogCustom
 import com.example.receitas.shared.extension.showToast
 import com.example.receitas.shared.extension.showsnackBar
-import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -32,8 +31,8 @@ class DetalhesActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDetalhesBinding
     private val viewModel :DetalhesViewModel by viewModels()
     private lateinit var  receitaView : ReceitaView
-    private val mediaController by lazy {
-        MediaController(this)
+    private val alertDialog by lazy {
+        AlertDialogCustom(this)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,17 +48,6 @@ class DetalhesActivity : AppCompatActivity() {
 
     fun initBinds(){
         with(binding) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                scrollView2.setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-                    if (scrollY > oldScrollY  ) {
-
-                    } else {
-
-                    }
-                }
-            } else {
-                TODO("VERSION.SDK_INT < M")
-            }
 
             imgBtnEditar.setOnClickListener {
                 goToSaveEditReceita()
@@ -76,8 +64,19 @@ class DetalhesActivity : AppCompatActivity() {
         }
     }
 
+    override fun onRestart() {
+        super.onRestart()
+        Const.exibilog("Restart")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Const.exibilog("Resume")
+    }
+
     override fun onStart() {
         super.onStart()
+        alertDialog.fecharDialog()
         viewModel.getReceitaByName(getIntentExtraReceitaName())
     }
     private fun goToSaveEditReceita(){
@@ -88,22 +87,21 @@ class DetalhesActivity : AppCompatActivity() {
     }
 
     fun initObserver(){
-     viewModel.receitaView?.observe(this){
-         if (it != null){
+     viewModel.resultReceitaLiveData?.observe(this){
+         /*if (it != null){
              receitaView =it
              getViewReceita()
-         }
+         }*/
+         receitaView = it.getOrThrow()
+         getViewReceita()
      }
         viewModel.resultOperacaoLiveDataAddReceita.observe(this){
           if (it.sucesso) showsnackBar(
               this@DetalhesActivity.binding.imgBtnAddUserList ,
-              "Receita adicionada a sua lista"
+             "Receita adicionada a sua lista"
           )
            else showToast(it.mensagem)
         }
-     viewModel.cerregandoLiveData.observe(this){
-         // TODO  progressBar
-     }
         viewModel.resultOperacaoLiveDataDelete.observe(this){
             if (it.sucesso){
                 finish()
@@ -112,19 +110,17 @@ class DetalhesActivity : AppCompatActivity() {
                 applicationContext.showToast(it.mensagem)
             }
         }
-        viewModel.appStateList.observe(this){
+        viewModel.appStateRequest.observe(this){
             when(it){
-                AppStateList.loading ->{
+                AppStateRequest.loading ->{
                     binding.scrollView2.visibility = View.GONE
                     binding.idImgReceitaDetalhes.visibility = View.GONE
-
-                    binding.progressBar2.visibility = View.VISIBLE
+                    alertDialog.exibirDiaolog()
                 }
-                AppStateList.loaded ->{
+                AppStateRequest.loaded ->{
                     binding.scrollView2.visibility = View.VISIBLE
                     binding.idImgReceitaDetalhes.visibility = View.VISIBLE
-
-                    binding.progressBar2.visibility = View.GONE
+                    alertDialog.fecharDialog()
                 }
                 else -> {}
             }
@@ -148,7 +144,6 @@ class DetalhesActivity : AppCompatActivity() {
     }
 
     fun showDialog(receitaView: ReceitaView){
-
         val dialog = AlertDialog.Builder(this)
         dialog.setMessage("Deseja excluir a Receita de ${receitaView.titulo}?")
             .setPositiveButton("Sim"){ di,p ->
@@ -157,7 +152,6 @@ class DetalhesActivity : AppCompatActivity() {
             }.setNegativeButton("Não"){di,pos->
                 di.dismiss()
             }.create().show()
-
     }
 
    private  fun getViewReceita() {
@@ -202,7 +196,7 @@ class DetalhesActivity : AppCompatActivity() {
                         shareIntent.putExtra(Intent.EXTRA_SUBJECT,receitaView.titulo)
                         shareIntent.putExtra(Intent.EXTRA_TEXT,
                            "Instrucao : ${receitaView.instrucao}\n" +
-                                   "Ingredientes: ${receitaView.ingredientes}"
+                                   "Ingredientes:\n ${receitaView.ingredientes}\n"
 
                         )
                         shareIntent.putExtra(Intent.EXTRA_STREAM,receitaView.Imagem)
@@ -217,6 +211,5 @@ class DetalhesActivity : AppCompatActivity() {
 
         })
     }
-
 
 }

@@ -6,13 +6,12 @@ import android.content.pm.PackageManager
 import androidx.core.content.ContextCompat
 import androidx.core.content.PackageManagerCompat
 
-class Permission {
+object  Permission {
+    val listPermissionNagative = mutableSetOf<String>()
     fun requestPermission(context: Context ,permission : String){
         val isPermited  = ContextCompat.checkSelfPermission(context,permission)
              if (isPermited == PackageManager.PERMISSION_DENIED){
-
-             }else{
-
+                   listPermissionNagative.add(permission)
              }
     }
 }

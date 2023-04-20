@@ -15,7 +15,7 @@ interface IReceitaUseCase {
     suspend   fun recuperarReceitasPorArea(areaName:String):List<Receita>
     suspend   fun pesquisarReceitaPorTitulo(tituloPesquisa:String):ResultConsultasReceita
     suspend   fun listarArea():ResultConsultasAreas
-    suspend fun getReceitaByName(receitaName:String):ReceitaView
+    suspend fun getReceitaByName(receitaName:String):Result<ReceitaView>
     suspend fun getReceitaById(receita:Receita):ReceitaView
     suspend fun criarReceita(receita: Receita):ResultadoOperacaoDb
     suspend fun atualizarReceita(receitaView:ReceitaView):ResultadoOperacaoDb

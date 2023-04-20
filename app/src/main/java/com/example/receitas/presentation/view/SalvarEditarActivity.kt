@@ -12,11 +12,13 @@ import androidx.activity.viewModels
 import com.example.receitas.R
 import com.example.receitas.databinding.ActivitySalvarEditarBinding
 import com.example.receitas.databinding.CadastrarReceitaLayoutBinding
+import com.example.receitas.domain.results.AppStateRequest
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.model.ReceitaViewCreate
 import com.example.receitas.presentation.viewmodel.SalvarEditarViewModel
-import com.example.receitas.shared.HelperCamera
+import com.example.receitas.shared.HelperCreateUri
 import com.example.receitas.shared.constant.Const
+import com.example.receitas.shared.dialog.AlertDialogCustom
 import com.example.receitas.shared.extension.esconderTeclado
 import com.example.receitas.shared.extension.showToast
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -35,17 +37,18 @@ class SalvarEditarActivity : AppCompatActivity() {
     private lateinit var permission :  ActivityResultLauncher<String>
     private lateinit var acessCamera :   ActivityResultLauncher<Intent>
     private  var image :Uri? = null
-
-
+    private val alertDialog by lazy {
+        AlertDialogCustom(this)
+    }
+    private lateinit var namePermission : String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         supportActionBar?.title =""
 
-        virificaResultContracts()
-        initObservables()
-        initListeners()
+        initResultContracts()
+        initObservers()
 
         binding.imgReceitaCadastro.setOnClickListener {view->
             view.esconderTeclado()
@@ -91,42 +94,49 @@ class SalvarEditarActivity : AppCompatActivity() {
         getDataReceitaToEditText()
     }
 
-    private fun virificaResultContracts() {
-        permission = registerForActivityResult(ActivityResultContracts.RequestPermission()){
-            if (it){
-                launchCamera()
+    private fun initResultContracts() {
+        permission = registerForActivityResult(ActivityResultContracts.RequestPermission()){isPermited ->
+            if (isPermited){
+                when(namePermission){
+                    android.Manifest.permission.READ_EXTERNAL_STORAGE ->{
+                        resultaContract.launch("image/*")
+                    }
+                    android.Manifest.permission.CAMERA ->{
+                        launchCamera()
+                    }
+                }
             }else{
                 showToast("Permissão Negada")
             }
         }
         acessCamera = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             if (it != null){
-                val uri =HelperCamera.adicionarFotoPorCamera(it,this,)
+                val uri =HelperCreateUri.adicionarFotoPorCamera(it,this)
                 if (uri != null){
                     image = uri
-                    Picasso.get().load(image).placeholder(R.drawable.red_image_search_24).into(binding.imgReceitaCadastro)
+                   Picasso.get().load(uri).into(binding.imgReceitaCadastro)
                 }else{
-                    showToast("Nenhuma imagem ")
+                    showToast("Nenhuma imagem")
                 }
             }else{
                 showToast("Nenhuma imagem foi tirada")
             }
         }
-
         resultaContract = registerForActivityResult(ActivityResultContracts.GetContent()){
-            if (it !=null ){
-                image = HelperCamera.salvarFotoGaleriaUri(it,this)
-                Picasso.get().load(image).into(binding.imgReceitaCadastro)
 
-                Const.exibilog("imgaem galeria ${image}")
+            if (it !=null ){
+                image = HelperCreateUri.salvarFotoGaleriaUri(it,this)
+                Const.exibilog(image.toString())
+                Picasso.get()
+                    .load(image)
+                    .into(binding.imgReceitaCadastro)
             }else{
-                Const.exibilog("imgaem galeria sem foto ${image}")
                 showToast("Nenhuma imagem selecionada")
             }
         }
     }
 
-    private fun initListeners() {
+    private fun initObservers() {
         mainViewModel.resultadoOperacaoDb.observe(this){
             if (it.sucesso){
                 finish()
@@ -140,21 +150,21 @@ class SalvarEditarActivity : AppCompatActivity() {
              it.sucesso
             if (it.sucesso){
                 mainViewModel.criarReceita(it.receitaView)
-                showToast(getString(R.string.campo_preenchido))
-
             }else{
                 showToast(getString(R.string.preencha_camopo))
-                AlertMessengeFields()
+                verifyFields()
             }
         }
-        mainViewModel.isCreateReceita.observe(this){
-            //TODO CRIAR LOADING PARA SALVAR OU EDITAR
-        }
-    }
-
-    private fun initObservables() {
-        with(binding){
-
+        mainViewModel.statusApp.observe(this){
+            when(it){
+                AppStateRequest.loading ->{
+                    alertDialog.exibirDiaolog()
+                }
+                AppStateRequest.loaded ->{
+                    alertDialog.fecharDialog()
+                }
+                else -> {}
+            }
         }
     }
 
@@ -167,11 +177,13 @@ class SalvarEditarActivity : AppCompatActivity() {
         diolog.show()
 
         bottomSheetDiaolog.imgBtnGaleria.setOnClickListener {
-              resultaContract.launch("image/*")
-             diolog.dismiss()
+              namePermission = android.Manifest.permission.READ_EXTERNAL_STORAGE
+              requistarPermissao(namePermission)
+              diolog.dismiss()
         }
         bottomSheetDiaolog.imgBtnCamera.setOnClickListener {
-             requistarPermissao(android.Manifest.permission.CAMERA)
+            namePermission = android.Manifest.permission.CAMERA
+             requistarPermissao(namePermission)
             diolog.dismiss()
         }
 
@@ -220,7 +232,7 @@ class SalvarEditarActivity : AppCompatActivity() {
         }
     }
 
-    fun AlertMessengeFields(){
+    fun verifyFields(){
         with(binding){
             if (edtNomeReceita.text.toString().isEmpty()) edtNomeReceita.error = getString(R.string.alerta_nome_receita)
             else null

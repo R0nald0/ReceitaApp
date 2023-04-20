@@ -7,7 +7,7 @@ class ReceitaBannerService {
   private val listReceita = listOf(
         ReceitaDAO().apply {
               this.isUserList =false
-              this.nome = "Escondidinho de Camarão"
+              this.nome = "Surpreenda com Escondidinho de Camarão"
               this.image ="${R.drawable.escondidinho_camarao}"
               this.time ="35min"
               this.ingrediente = (listOf(
@@ -23,7 +23,7 @@ class ReceitaBannerService {
         },
         ReceitaDAO().apply {
             this.isUserList = false
-            this.nome ="Panqueca de carne moída"
+            this.nome ="Receita para um almoço em Família,Panqueca de carne moída"
             this.image = "${ R.drawable.carne2 }"
             this.time = "45min"
             this.ingrediente = listOf(
@@ -39,7 +39,7 @@ class ReceitaBannerService {
         },
         ReceitaDAO().apply {
               this.isUserList= false
-              this.nome = "Rocambole de carne moída"
+              this.nome = "Facil de Fazer,Rocambole de carne moída"
               this.image = "${R.drawable.carne3}"
               this.time ="25min"
               this.ingrediente = listOf(
@@ -53,7 +53,7 @@ class ReceitaBannerService {
         },
         ReceitaDAO().apply {
             this.isUserList =false
-            this.nome = "Escondidinho de carne seca"
+            this.nome = "Prepare Escondidinho de carne seca"
             this.image = "${R.drawable.carne4}"
             this.time ="50min"
             this.ingrediente =listOf(

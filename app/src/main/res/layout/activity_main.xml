@@ -29,6 +29,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:contentDescription="carrousel de imagens receitas"
+                android:elevation="5dp"
                 android:textAlignment="center"
                 app:autoPlay="true"
                 app:captionTextSize="13sp"

@@ -6,13 +6,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 
 import com.example.receitas.domain.interf.IReceitaUseCase
-import com.example.receitas.domain.results.AppStateList
+import com.example.receitas.domain.results.AppStateRequest
 
 import com.example.receitas.domain.results.ResultConsultasAreas
 import com.example.receitas.domain.results.ResultConsultasReceita
 import com.example.receitas.mapReceita.MapReceita
 import com.example.receitas.presentation.model.ReceitaView
-import com.example.receitas.shared.constant.Const
 
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -38,29 +37,26 @@ class MainViewModel @Inject constructor(
         val areaNameObserve : MutableLiveData<String>
         get() = _areaNameObserve
 
-        val listaReceitaLiveData = MutableLiveData<List<ReceitaView>>()
-        val appStateList = MutableLiveData<AppStateList>()
+        val listaReceitaApiLiveData = MutableLiveData<List<ReceitaView>>()
+        val appStateRequest = MutableLiveData<AppStateRequest>()
         private var _listaAreaCarregad =   false
         private var _receitalistCarregada = false
 
-
-
     init {
-        appStateList.value = AppStateList.loading
+        appStateRequest.value = AppStateRequest.loading
     }
     fun listarAreas(){
            viewModelScope.launch {
                     val resultadoConsulta = receitaUseCase.listarArea()
                    areasResultadoConsultadLiveData.postValue(resultadoConsulta)
-                  _listaAreaCarregad = true
+               _listaAreaCarregad = true
                  verifyListsChanging()
            }
        }
 
-    fun verifyListsChanging(){
-        Const.exibilog("area  ${_listaAreaCarregad} receita ${_receitalistCarregada}")
+    private fun verifyListsChanging(){
         if (_listaAreaCarregad  && _receitalistCarregada){
-                appStateList.postValue( AppStateList.loaded)
+                appStateRequest.postValue( AppStateRequest.loaded)
         }
     }
     fun listar(){
@@ -76,10 +72,12 @@ class MainViewModel @Inject constructor(
     fun recuperarArea(area:String?){
         if (area !=null ){
             viewModelScope.launch {
+                appStateRequest.value = AppStateRequest.loading
                 areaNameObserve.value = area
                 val  listaArea  = receitaUseCase.recuperarReceitasPorArea("${areaNameObserve.value}")
                  val listReceitasFromAreas= MapReceita.toListReceitaView(listaArea)
-                listaReceitaLiveData.postValue(listReceitasFromAreas)
+                listaReceitaApiLiveData.postValue(listReceitasFromAreas)
+                appStateRequest.value=AppStateRequest.loaded
             }
         }
     }

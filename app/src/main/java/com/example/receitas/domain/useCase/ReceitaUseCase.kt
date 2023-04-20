@@ -62,17 +62,21 @@ class ReceitaUseCase @Inject constructor(
               return listOf()
           }
     }
-    override suspend fun getReceitaByName(receitaName: String): ReceitaView {
+    override suspend fun getReceitaByName(receitaName: String): Result<ReceitaView> {
         try {
             val receitaView =  repository.recuperaReceitaPorNome(receitaName)
+
             if (receitaView !=null){
-                return  MapReceita.receitaToReceitaView(receitaView)
+                   val retornoReceita =  MapReceita.receitaToReceitaView(receitaView)
+                return  Result.success(retornoReceita)
             }else{
-                return  ReceitaView("",false,"null", Uri.EMPTY, "","", "","")
+                return  Result.success(
+                    ReceitaView("",false,"null", Uri.EMPTY, "","", "","")
+                )
             }
 
         }catch (ex:Exception){
-            throw Exception("Errro ao recuperar Receita :${ex.message}")
+             return  Result.failure(Exception("Errro ao recuperar Receita :${ex.message}"))
         }
     }
     override suspend fun getReceitaById(receita: Receita): ReceitaView {

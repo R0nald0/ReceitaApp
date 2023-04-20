@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.SearchView
 
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,7 +19,7 @@ import com.example.receitas.domain.adapter.UserReceitasAdapter
 import com.example.receitas.databinding.ActivityMainBinding
 import com.example.receitas.domain.adapter.SearchListAdapter
 import com.example.receitas.domain.model.Area
-import com.example.receitas.domain.results.AppStateList
+import com.example.receitas.domain.results.AppStateRequest
 import com.example.receitas.presentation.model.ReceitaView
 import com.example.receitas.presentation.viewmodel.MainViewModel
 import com.example.receitas.shared.extension.showToast
@@ -55,6 +54,7 @@ class MainActivity : AppCompatActivity() {
                delay(2000)
            }
             false
+
         }
 
         setContentView(binding.root)
@@ -99,7 +99,7 @@ class MainActivity : AppCompatActivity() {
               }
         }
 
-        mainViewModel.listaReceitaLiveData.observe(this){
+        mainViewModel.listaReceitaApiLiveData.observe(this){
             if (it !=null ){
                 adapter!!.adicionarLista( it as MutableList<ReceitaView>)
             }else{
@@ -111,12 +111,13 @@ class MainActivity : AppCompatActivity() {
              if (it.sucesso){
                     if (it.list.isNotEmpty()){
                         userReceitasAdapter?.carregarListaDeReceitas(it.list)
-
+                        binding.rcvUserReceitaList.visibility =View.VISIBLE
                         binding.txvListaReceitaVaziaTexto.visibility =View.GONE
                         binding.txvCriarReceita.visibility =View.GONE
                     }else{
                         binding.txvListaReceitaVaziaTexto.visibility =View.VISIBLE
                         binding.txvCriarReceita.visibility =View.VISIBLE
+                        binding.rcvUserReceitaList.visibility =View.GONE
                     }
              }else{
                  applicationContext.showToast(it.mensagem)
@@ -144,14 +145,14 @@ class MainActivity : AppCompatActivity() {
                  showToast(getString(R.string.erro_carregar))
              }
         }
-        mainViewModel.appStateList.observe(this){
+        mainViewModel.appStateRequest.observe(this){
              when(it){
-                AppStateList.loading ->{
+                AppStateRequest.loading ->{
                     binding.rcvArea.visibility = View.GONE
                     binding.rcvListReceitaApi.visibility = View.GONE
                     binding.progressBar.visibility = View.VISIBLE
                 }
-                AppStateList.loaded ->{
+                AppStateRequest.loaded ->{
                     binding.rcvArea.visibility = View.VISIBLE
                     binding.rcvListReceitaApi.visibility = View.VISIBLE
                     binding.progressBar.visibility = View.GONE

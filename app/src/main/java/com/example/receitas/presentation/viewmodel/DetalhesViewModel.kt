@@ -5,11 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.receitas.domain.interf.IReceitaUseCase
-import com.example.receitas.domain.results.AppStateList
+import com.example.receitas.domain.results.AppStateRequest
 import com.example.receitas.domain.results.ResultadoOperacaoDb
 import com.example.receitas.mapReceita.MapReceita
 import com.example.receitas.presentation.model.ReceitaView
-import com.example.receitas.presentation.model.ReceitaViewCreate
 import com.example.receitas.shared.constant.Const
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -20,32 +19,31 @@ class DetalhesViewModel @Inject constructor(
    private val receitaUseCase :IReceitaUseCase
 ): ViewModel() {
 
-    private val _receitaLiveData = MutableLiveData<ReceitaView>()
-    val receitaView : LiveData<ReceitaView>
-       get() = _receitaLiveData
+    private val _resultReceitaLiveData = MutableLiveData<Result<ReceitaView>>()
+    val resultReceitaLiveData : LiveData<Result<ReceitaView>>
+       get() = _resultReceitaLiveData
 
-    val cerregandoLiveData = MutableLiveData<Boolean>()
-    val isReceitaListUser  = MutableLiveData<Boolean>()
 
     val resultOperacaoLiveDataDelete =MutableLiveData<ResultadoOperacaoDb>()
 
     val _resultOperacaoLiveDataAddReceita =MutableLiveData<ResultadoOperacaoDb>()
     val resultOperacaoLiveDataAddReceita : LiveData<ResultadoOperacaoDb>
        get() = _resultOperacaoLiveDataAddReceita
-    val appStateList = MutableLiveData<AppStateList>()
+    val appStateRequest = MutableLiveData<AppStateRequest>()
 
     fun getReceitaByName(receitaView:ReceitaView){
-        appStateList.value = AppStateList.loading
+        appStateRequest.value = AppStateRequest.loading
         viewModelScope.launch {
             if (receitaView.isUserList){
-                _receitaLiveData.value =receitaView
-                appStateList.value = AppStateList.loaded
+                _resultReceitaLiveData.value = Result.success(receitaView)
+                appStateRequest.value = AppStateRequest.loaded
             }else{
                 val receita = MapReceita.receitaViewToReceita(receitaView)
 
                 val receitaViewApi = receitaUseCase.getReceitaByName(receita.titulo)
-                _receitaLiveData.postValue(receitaViewApi)
-                appStateList.value = AppStateList.loaded
+                val re = receitaViewApi.getOrThrow()
+                _resultReceitaLiveData.postValue(receitaViewApi)
+                appStateRequest.value = AppStateRequest.loaded
             }
         }
     }

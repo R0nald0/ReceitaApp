@@ -1,5 +1,5 @@
 package com.example.receitas.domain.results
 
-enum class AppStateList {
+enum class AppStateRequest {
     loading,loaded
 }
