@@ -15,7 +15,7 @@ import java.util.Date
 
 object  HelperCreateUri {
 
-     private const val  authority ="com.example.receitas.provider"
+     private const val  authority ="com.example.receitas.fileprovider"
      private val nameImageChild = "imgReceita.png"
 
       fun adicionarFotoPorCamera(resultActivity: ActivityResult, context: Context) : Uri? {
@@ -26,18 +26,6 @@ object  HelperCreateUri {
             val caminho = File(context.cacheDir, "images")
             val uriFile = createFileUri(caminho,"${data.time}$nameImageChild",context,bitmap)
             return  uriFile
-           /*
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output)
-            output.flush()
-            output.close()
-            if (file.exists()){
-                 Const.exibilog("Uri -- ${Uri.fromFile(file)}")
-                //val uriImage = FileProvider.getUriForFile(context, "com.example.receitas.provider",file)
-                return Uri.fromFile(file)
-               // return uriImage
-            }else{
-                return Uri.EMPTY
-            }*/
         }else{
             return null
         }
@@ -66,9 +54,8 @@ object  HelperCreateUri {
           output.flush()
           output.close()
 
-          val uriImage = FileProvider.getUriForFile(context, "com.example.receitas.fileprovider",file,"ReceitaImagem")
+          val uriImage = FileProvider.getUriForFile(context, authority,file,"ReceitaImagem")
 
-          println(uriImage)
           return uriImage
     }
 }

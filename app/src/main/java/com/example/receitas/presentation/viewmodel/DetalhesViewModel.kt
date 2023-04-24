@@ -50,6 +50,7 @@ class DetalhesViewModel @Inject constructor(
 
     fun addReceitaToUserList(receitaView: ReceitaView){
             viewModelScope.launch {
+
                 val resultadoOperacao = receitaUseCase.addReceitaToUserList(receitaView)
                 _resultOperacaoLiveDataAddReceita.postValue(resultadoOperacao)
             }

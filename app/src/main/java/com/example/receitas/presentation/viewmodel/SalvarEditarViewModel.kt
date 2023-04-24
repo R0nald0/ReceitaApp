@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.receitas.domain.interf.IReceitaUseCase
+import com.example.receitas.domain.model.Receita
 import com.example.receitas.domain.results.AppStateRequest
 import com.example.receitas.domain.results.ResultadoOperacaoDb
 import com.example.receitas.domain.results.VerificaCampos
@@ -14,6 +15,7 @@ import com.example.receitas.presentation.model.ReceitaViewCreate
 import com.example.receitas.shared.constant.Const
 import com.example.receitas.shared.permissions.Permission
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.nio.channels.MulticastChannel
@@ -38,9 +40,8 @@ class SalvarEditarViewModel @Inject constructor(
       get() = _resultadoOperacaoDbLiveData
 
     fun criarReceita(receitaViewCreate : ReceitaViewCreate){
-           val receita =MapReceita.receitaViewCreateToReceita(receitaViewCreate)
-
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
+            val receita = MapReceita.receitaViewCreateToReceita(receitaViewCreate)
             val resultado = useCaseReceita.criarReceita(receita)
             _resultadoOperacaoDbLiveData.postValue(resultado)
         }
@@ -48,16 +49,16 @@ class SalvarEditarViewModel @Inject constructor(
 
     fun verificarCampos(receitaCreat: ReceitaViewCreate){
 
-        viewModelScope.launch{
-            _statusApp.value = AppStateRequest.loading
+        viewModelScope.launch(Dispatchers.IO){
+            _statusApp.postValue(AppStateRequest.loading)
             val result = useCaseReceita.verificarCampos(receitaCreat)
-            _verifiacaCampoLiveData.value = result
-            _statusApp.value = AppStateRequest.loaded
+            _verifiacaCampoLiveData.postValue(result)
+            _statusApp.postValue(AppStateRequest.loaded)
         }
     }
     fun editareceita(receitaView: ReceitaView){
 
-         viewModelScope.launch {
+         viewModelScope.launch(Dispatchers.IO) {
              val retorno = useCaseReceita.atualizarReceita(receitaView)
              _resultadoOperacaoDbLiveData.postValue(retorno)
              }

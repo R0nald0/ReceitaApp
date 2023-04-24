@@ -28,7 +28,9 @@ import dagger.hilt.android.AndroidEntryPoint
 class DetalhesActivity : AppCompatActivity() {
 
 
-    private lateinit var binding: ActivityDetalhesBinding
+    private val binding by lazy {
+        ActivityDetalhesBinding.inflate(layoutInflater)
+    }
     private val viewModel :DetalhesViewModel by viewModels()
     private lateinit var  receitaView : ReceitaView
     private val alertDialog by lazy {
@@ -36,7 +38,6 @@ class DetalhesActivity : AppCompatActivity() {
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityDetalhesBinding.inflate(layoutInflater)
         setContentView(binding.root)
         supportActionBar?.title=""
 
@@ -64,16 +65,6 @@ class DetalhesActivity : AppCompatActivity() {
         }
     }
 
-    override fun onRestart() {
-        super.onRestart()
-        Const.exibilog("Restart")
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Const.exibilog("Resume")
-    }
-
     override fun onStart() {
         super.onStart()
         alertDialog.fecharDialog()
@@ -88,10 +79,6 @@ class DetalhesActivity : AppCompatActivity() {
 
     fun initObserver(){
      viewModel.resultReceitaLiveData?.observe(this){
-         /*if (it != null){
-             receitaView =it
-             getViewReceita()
-         }*/
          receitaView = it.getOrThrow()
          getViewReceita()
      }
@@ -195,12 +182,16 @@ class DetalhesActivity : AppCompatActivity() {
                         shareIntent.type = "image/png"
                         shareIntent.putExtra(Intent.EXTRA_SUBJECT,receitaView.titulo)
                         shareIntent.putExtra(Intent.EXTRA_TEXT,
-                           "Instrucao : ${receitaView.instrucao}\n" +
+                           "Instrucões:\n${receitaView.instrucao}\n" +
                                    "Ingredientes:\n ${receitaView.ingredientes}\n"
 
                         )
-                        shareIntent.putExtra(Intent.EXTRA_STREAM,receitaView.Imagem)
-                        shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        if(receitaView.isUserList) {
+                            shareIntent.putExtra(Intent.EXTRA_STREAM, receitaView.Imagem)
+                            shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        }
+                        else shareIntent.putExtra(Intent.EXTRA_TEXT,receitaView.ImageUrl)
+
 
                        startActivity(Intent.createChooser(shareIntent,"Item receita"))
                        true

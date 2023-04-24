@@ -82,6 +82,7 @@ dependencies {
 
     //hilt
     implementation "com.google.dagger:hilt-android:2.44"
+    //Kapt
     kapt "com.google.dagger:hilt-compiler:2.44"
 
     //Androide ktx
@@ -96,6 +97,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.0'
     implementation 'com.google.android.material:material:1.7.0'
 
+     //Dependencia para teste
+
     //Dependências biblioteca Truth
     testImplementation "com.google.truth:truth:1.1.3"
     //Dependência da Biblioteca Mockito
@@ -103,9 +106,14 @@ dependencies {
     // testes
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
 
+    //Dependencia para criar executor Síncrono
+    testImplementation 'androidx.arch.core:core-testing:2.2.0'
+
+
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    //Kotlin-coroutineTeste
     testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4"
 }
 kapt {

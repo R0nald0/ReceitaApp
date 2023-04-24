@@ -46,7 +46,7 @@ class MainViewModel @Inject constructor(
         appStateRequest.value = AppStateRequest.loading
     }
     fun listarAreas(){
-           viewModelScope.launch {
+           viewModelScope.launch(Dispatchers.IO) {
                     val resultadoConsulta = receitaUseCase.listarArea()
                    areasResultadoConsultadLiveData.postValue(resultadoConsulta)
                _listaAreaCarregad = true
@@ -59,7 +59,7 @@ class MainViewModel @Inject constructor(
                 appStateRequest.postValue( AppStateRequest.loaded)
         }
     }
-    fun listar(){
+    fun getListUserReceitas(){
            viewModelScope.launch(Dispatchers.IO) {
                val resultado = receitaUseCase.listarReceita()
                 resultadoListConsultaLiveData.postValue(resultado)
@@ -70,14 +70,17 @@ class MainViewModel @Inject constructor(
      }
 
     fun recuperarArea(area:String?){
-        if (area !=null ){
-            viewModelScope.launch {
-                appStateRequest.value = AppStateRequest.loading
-                areaNameObserve.value = area
-                val  listaArea  = receitaUseCase.recuperarReceitasPorArea("${areaNameObserve.value}")
-                 val listReceitasFromAreas= MapReceita.toListReceitaView(listaArea)
-                listaReceitaApiLiveData.postValue(listReceitasFromAreas)
-                appStateRequest.value=AppStateRequest.loaded
+        if (area != null) {
+            if (area.isNotEmpty() ){
+                viewModelScope.launch {
+                    appStateRequest.value = AppStateRequest.loading
+                    areaNameObserve.value = area
+                     val  listaArea  = receitaUseCase.getReceitaByAreaName("${areaNameObserve.value}")
+                    listaReceitaApiLiveData.postValue(listaArea)
+                    appStateRequest.value=AppStateRequest.loaded
+                }
+            }else{
+                listaReceitaApiLiveData.postValue(listOf())
             }
         }
     }

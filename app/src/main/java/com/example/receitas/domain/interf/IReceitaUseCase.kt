@@ -12,7 +12,7 @@ interface IReceitaUseCase {
     fun verificarCampos(receitaView: ReceitaViewCreate) :VerificaCampos
     suspend fun addReceitaToUserList(receitaView: ReceitaView):ResultadoOperacaoDb
     suspend   fun listarReceita():ResultConsultasReceita
-    suspend   fun recuperarReceitasPorArea(areaName:String):List<Receita>
+    suspend   fun getReceitaByAreaName(areaName:String): List<ReceitaView>
     suspend   fun pesquisarReceitaPorTitulo(tituloPesquisa:String):ResultConsultasReceita
     suspend   fun listarArea():ResultConsultasAreas
     suspend fun getReceitaByName(receitaName:String):Result<ReceitaView>

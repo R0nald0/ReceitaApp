@@ -38,25 +38,34 @@ class ReceitaUseCase @Inject constructor(
              val listReceita = repository.getUserListReceitasDb()
 
              val listaReceitaview = MapReceita.toListReceitaView(listReceita)
-             return  ResultConsultasReceita(
-                 true,
-                 "Lista carregada com sucesso",
-                 listaReceitaview
-             )
+            if(listaReceitaview.isNotEmpty()){
+                return  ResultConsultasReceita(
+                    true,
+                    "Lista carregada com sucesso",
+                    listaReceitaview
+                )
+            }else{
+                return  ResultConsultasReceita(
+                    true,
+                    "Lista vazia",
+                    listaReceitaview
+                )
+            }
 
          }catch (ex:Exception){
              ex.stackTrace
              return  ResultConsultasReceita(
-                 true,
-                 "Erro ao recuperar lista  ${ex.message}",
+                 false,
+                 "Erro ao recuperar lista",
                  listOf()
              )
          }
     }
-    override suspend fun recuperarReceitasPorArea(areaName: String): List<Receita> {
+    override suspend fun getReceitaByAreaName(areaName: String): List<ReceitaView> {
           try {
               val listaReceita = repository.recuperarReceitasPorArea(areaName)
-              return  listaReceita
+              val listaReceitaView = MapReceita.toListReceitaView(listaReceita)
+              return  listaReceitaView
           }catch (ex:Exception){
             ex.stackTrace
               return listOf()
@@ -76,19 +85,20 @@ class ReceitaUseCase @Inject constructor(
             }
 
         }catch (ex:Exception){
-             return  Result.failure(Exception("Errro ao recuperar Receita :${ex.message}"))
+             ex.stackTrace
+             return  Result.failure(Exception("Errro ao recuperar Receita"))
         }
     }
     override suspend fun getReceitaById(receita: Receita): ReceitaView {
         try {
-          val receitaViwe =  repository.recuperaReceitaId(receita)
-             if (receitaViwe !=null){
-                 return  MapReceita.receitaToReceitaView(receitaViwe)
+          val receitaView =  repository.recuperaReceitaId(receita)
+             if (receitaView !=null){
+                 return  MapReceita.receitaToReceitaView(receitaView)
              }
-            return    return  ReceitaView("",false,"null", Uri.EMPTY, "","", "","")
+            return  ReceitaView("",false,"null", Uri.EMPTY, "","", "","")
 
         }catch (ex:Exception){
-            throw Exception("Errro ao recuperar Receita :${ex.message}")
+            throw Exception("Erro ao recuperar Receita :${ex.message}")
         }
     }
     override suspend fun criarReceita(receita: Receita): ResultadoOperacaoDb {
@@ -102,7 +112,7 @@ class ReceitaUseCase @Inject constructor(
             if (receita.tempo.isEmpty())
                 receita.tempo ="00"
             if (receita.instrucoes.isEmpty())
-                return ResultadoOperacaoDb(false,"preenchos as instrucoes")
+                return ResultadoOperacaoDb(false,"preencha as instrucoes")
 
             val receitaCriada = repository.criarReceita(receita)
             return ResultadoOperacaoDb(
@@ -111,6 +121,7 @@ class ReceitaUseCase @Inject constructor(
              )
 
         }catch (ex:Exception){
+            ex.stackTrace
            return ResultadoOperacaoDb(
                 false,"erro: ${ex.message} -- ${ex.stackTrace}"
             )
@@ -153,9 +164,7 @@ class ReceitaUseCase @Inject constructor(
         return verificaCampos
     }
     override suspend fun addReceitaToUserList(receitaView: ReceitaView): ResultadoOperacaoDb {
-
              val receita =MapReceita.receitaViewToReceita(receitaView).copy(isUserList = true)
-
              val resultadoOperacaoDb =criarReceita(receita)
                 return  resultadoOperacaoDb
     }

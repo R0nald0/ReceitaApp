@@ -54,7 +54,6 @@ class MainActivity : AppCompatActivity() {
                delay(2000)
            }
             false
-
         }
 
         setContentView(binding.root)
@@ -66,7 +65,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        mainViewModel.listar()
+        mainViewModel.getListUserReceitas()
         mainViewModel.listarAreas()
         mainViewModel.recuperarArea(areaAdapter?.areaName)
         mainViewModel.getListReceitaBanner()
@@ -100,7 +99,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         mainViewModel.listaReceitaApiLiveData.observe(this){
-            if (it !=null ){
+            if (it.isNotEmpty() ){
                 adapter!!.adicionarLista( it as MutableList<ReceitaView>)
             }else{
                 applicationContext.showToast(getString(R.string.lista_vazia))
@@ -211,7 +210,6 @@ class MainActivity : AppCompatActivity() {
                         binding.rcvSearchReceitas.visibility =View.GONE
                     }
                 }
-
                 return true
             }
 
